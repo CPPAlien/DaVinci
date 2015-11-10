@@ -51,7 +51,7 @@ public class BaseRequest {
      * @param params get parameters, will combine the params as a get request, like http://ninty.cc?a=1&b=2
      * @param requestListener listener
      */
-    public void doGet(String requestUrl, Map<String, Object> params, OnRequestListener requestListener) {
+    public void doGet(String requestUrl, Map<String, Object> params, OnDaVinciRequestListener requestListener) {
         doRequest(RequestMethod.Way.GET,
                 requestUrl, params, null, requestListener);
     }
@@ -62,7 +62,7 @@ public class BaseRequest {
      * @param postJsonData post contents, json format data
      * @param requestListener listener
      */
-    public void doPost(String requestUrl, JSONObject postJsonData, OnRequestListener requestListener) {
+    public void doPost(String requestUrl, JSONObject postJsonData, OnDaVinciRequestListener requestListener) {
         doRequest(RequestMethod.Way.POST,
                 requestUrl, null, postJsonData, requestListener);
     }
@@ -73,7 +73,7 @@ public class BaseRequest {
      * @param postJsonData post method parameters json format data
      * @param requestListener listener
      */
-    private void doRequest(RequestMethod.Way way, String url, Map<String, Object> urlMap, JSONObject postJsonData, final OnRequestListener requestListener) {
+    private void doRequest(RequestMethod.Way way, String url, Map<String, Object> urlMap, JSONObject postJsonData, final OnDaVinciRequestListener requestListener) {
         int volleyWay;
         String requestUrl = url;
 
@@ -107,14 +107,14 @@ public class BaseRequest {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         VinciLog.i("response:" + jsonObject.toString());
-                        requestListener.onSuccess(jsonObject);
+                        requestListener.onDaVinciRequestSucceed(jsonObject);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         VinciLog.e(volleyError.toString());
-                        requestListener.onFailed(volleyError.toString());
+                        requestListener.onDaVinciRequestFailed(volleyError.toString());
                     }
                 }) {
             @Override

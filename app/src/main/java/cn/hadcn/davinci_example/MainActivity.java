@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.hadcn.davinci.DaVinci;
-import cn.hadcn.davinci.http.OnRequestListener;
+import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 
-public class MainActivity extends AppCompatActivity implements OnRequestListener{
+public class MainActivity extends AppCompatActivity implements OnDaVinciRequestListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,19 +22,21 @@ public class MainActivity extends AppCompatActivity implements OnRequestListener
         Map<String, Object> map = new HashMap<>();
         map.put("q", "Beijing,cn");
         map.put("appid", "2de143494c0b295cca9337e1e96b00e0");
+        DaVinci.enableDebug("DaVinciTest");
         DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
 
         ImageView imageView = (ImageView)findViewById(R.id.image_view);
         DaVinci.with(this).getImageLoader().load(imageView, "https://cdn-images-1.medium.com/max/800/1*dWGwx6UUjc0tocYzFNBLEw.jpeg");
+
     }
 
     @Override
-    public void onSuccess(JSONObject jsonObject) {
+    public void onDaVinciRequestSucceed(JSONObject jsonObject) {
         Log.i("DaVinciTest", jsonObject.toString());
     }
 
     @Override
-    public void onFailed(String errorInfo) {
+    public void onDaVinciRequestFailed(String errorInfo) {
 
     }
 }

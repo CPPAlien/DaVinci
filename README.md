@@ -42,12 +42,24 @@ DaVinci.init(Context);
 ```
 before each calling, usually you can put it in Application's onCreate method.
 
-###5, Enable Debuging
+###5, Other settings
+enable Debuging
 ```
 DaVinci.enableDebug(String tag);
 ```
+add http request headers
+```
+getHttpRequest().addHeaders(Map<String, String> headersMap)
+```
+set http request timeout
+```
+getHttpRequest().setTimesOut(int timesOutMs)
+```
+set http request max retry times
+```
+getHttpRequest().setMaxRetries(int maxRetries)
+```
 
-
-Thank you for DiskLruCache powered by Jake Wharton.
+Thanks for DiskLruCache which powered by Jake Wharton.
 
 https://github.com/JakeWharton/DiskLruCache

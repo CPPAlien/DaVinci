@@ -19,8 +19,14 @@ android {
     }
 }
 
+repositories{
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.0'
-    compile project(':davinci')
+    compile(name:'davinci-1.0.3', ext:'aar')
 }

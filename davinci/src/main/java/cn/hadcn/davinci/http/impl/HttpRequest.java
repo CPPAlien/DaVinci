@@ -1,4 +1,4 @@
-package cn.hadcn.davinci.http;
+package cn.hadcn.davinci.http.impl;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -14,33 +14,34 @@ import java.util.Map;
 
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.base.RequestMethod;
+import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 
 
 /**
  * BaseRequest
  * Created by 90Chris on 2015/1/26.
  * */
-public class BaseRequest {
+public class HttpRequest {
     RequestQueue mRequestQueue;
     Map<String, String> mHeadersMap = null;
     int mTimeOutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
     int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
 
-    public BaseRequest(RequestQueue requestQueue) {
+    public HttpRequest(RequestQueue requestQueue) {
         mRequestQueue = requestQueue;
     }
 
-    public BaseRequest setTimesOut(int timesOutMs) {
+    public HttpRequest setTimesOut(int timesOutMs) {
         mTimeOutMs = timesOutMs;
         return this;
     }
 
-    public BaseRequest setMaxRetries(int maxRetries) {
+    public HttpRequest setMaxRetries(int maxRetries) {
         mMaxRetries = maxRetries;
         return this;
     }
 
-    public BaseRequest addHeaders(Map<String, String> headersMap) {
+    public HttpRequest addHeaders(Map<String, String> headersMap) {
         mHeadersMap = headersMap;
         return this;
     }
@@ -107,7 +108,7 @@ public class BaseRequest {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         VinciLog.i("response:" + jsonObject.toString());
-                        requestListener.onDaVinciRequestSucceed(jsonObject);
+                        requestListener.onDaVinciRequestSuccess(jsonObject);
                     }
                 },
                 new Response.ErrorListener() {

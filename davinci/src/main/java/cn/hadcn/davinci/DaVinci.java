@@ -7,7 +7,7 @@ import com.android.volley.toolbox.Volley;
 
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.cache.DaImageLoader;
-import cn.hadcn.davinci.http.BaseRequest;
+import cn.hadcn.davinci.http.impl.HttpRequest;
 
 
 /**
@@ -67,8 +67,8 @@ public class DaVinci {
         VinciLog.LOG_TAG = tag;
     }
 
-    public BaseRequest getHttpRequest(){
-        return new BaseRequest(mRequestQueue);
+    public HttpRequest getHttpRequest(){
+        return new HttpRequest(mRequestQueue);
     }
 
     public DaImageLoader getImageLoader() {

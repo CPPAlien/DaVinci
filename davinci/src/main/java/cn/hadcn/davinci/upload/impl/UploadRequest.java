@@ -27,16 +27,16 @@ public class UploadRequest<T> extends Request<T> {
 
     private MultipartEntityBuilder mBuilder = MultipartEntityBuilder.create();
     private final Response.Listener<T> mListener;
-    private final File mImageFile;
+    private final File mFile;
     protected Map<String, String> headers;
 
-    public UploadRequest(String url, File imageFile, Listener<T> listener, ErrorListener errorListener) {
+    public UploadRequest(String url, File imageFile, String mimeType, Listener<T> listener, ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
 
         mListener = listener;
-        mImageFile = imageFile;
+        mFile = imageFile;
 
-        buildMultipartEntity();
+        buildMultipartEntity(mimeType);
     }
 
     @Override
@@ -53,9 +53,15 @@ public class UploadRequest<T> extends Request<T> {
         return headers;
     }
 
-    private void buildMultipartEntity()
+    private void buildMultipartEntity(String mimeType)
     {
-        mBuilder.addBinaryBody(FILE_PART_NAME, mImageFile, ContentType.create("image/jpeg"), mImageFile.getName());
+        ContentType contentType;
+        if ( mimeType == null ) {
+            contentType = ContentType.DEFAULT_BINARY;
+        } else {
+            contentType = ContentType.create(mimeType);
+        }
+        mBuilder.addBinaryBody(FILE_PART_NAME, mFile, contentType, mFile.getName());
         mBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         mBuilder.setLaxMode().setBoundary("xx").setCharset(Charset.forName("UTF-8"));
     }

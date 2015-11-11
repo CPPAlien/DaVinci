@@ -59,6 +59,10 @@ set http request max retry times
 ```
 getHttpRequest().setMaxRetries(int maxRetries)
 ```
+limit the max size of image loaded from internet
+```
+getImageLoader().resize(int maxPix).load(...)
+```
 
 Thanks for DiskLruCache which powered by Jake Wharton.
 

@@ -107,7 +107,7 @@ public class HttpRequest {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
-                        VinciLog.i("response:" + jsonObject.toString());
+                        VinciLog.i("http response:" + jsonObject.toString());
                         requestListener.onDaVinciRequestSuccess(jsonObject);
                     }
                 },
@@ -115,7 +115,7 @@ public class HttpRequest {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         VinciLog.e(volleyError.toString());
-                        requestListener.onDaVinciRequestFailed(volleyError.toString());
+                        requestListener.onDaVinciRequestFailed(String.valueOf(volleyError.networkResponse.statusCode));
                     }
                 }) {
             @Override

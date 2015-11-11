@@ -56,8 +56,13 @@ public class DaImageLoader {
         new ReadBitmapTask(imageView, url, loading_image, error_image).execute();
     }
 
-    public DaImageLoader resize(int max) {
-        mMaxSize = max;
+    /**
+     * limit the max size of an image will be displayed, height and width are both shorter than maxPix
+     * @param maxPix max pixels of height and width
+     * @return DaImageLoader instance
+     */
+    public DaImageLoader resize(int maxPix) {
+        mMaxSize = maxPix;
         return this;
     }
 

@@ -19,8 +19,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:22.1.0'
-    compile files('libs/httpmime-4.5.1.jar')
-    compile files('libs/httpcore-4.4.3.jar')
+    compile files('libs/httpmime-4.1.3.jar')
 }

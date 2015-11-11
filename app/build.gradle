@@ -17,6 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 repositories{
@@ -26,7 +27,7 @@ repositories{
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.0'
-    compile(name:'davinci-1.0.3', ext:'aar')
+    //compile(name:'davinci-1.0.3', ext:'aar')
+    compile project(':davinci')
 }

@@ -27,11 +27,10 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
         ImageView imageView = (ImageView)findViewById(R.id.image_view);
         DaVinci.with(this).getImageLoader().load(imageView, "https://cdn-images-1.medium.com/max/800/1*dWGwx6UUjc0tocYzFNBLEw.jpeg");
-
     }
 
     @Override
-    public void onDaVinciRequestSucceed(JSONObject jsonObject) {
+    public void onDaVinciRequestSuccess(JSONObject jsonObject) {
         Log.i("DaVinciTest", jsonObject.toString());
     }
 

@@ -3,6 +3,7 @@ package cn.hadcn.davinci.upload.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,15 +18,17 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+
 
 public class UploadRequest<T> extends Request<T> {
 
     private static final String FILE_PART_NAME = "file";
 
-    private MultipartEntityBuilder mBuilder = MultipartEntityBuilder.create();
+    private MultipartEntity mEntity;
+    private String mContentType;
     private final Response.Listener<T> mListener;
     private final File mFile;
     protected Map<String, String> headers;
@@ -55,21 +58,23 @@ public class UploadRequest<T> extends Request<T> {
 
     private void buildMultipartEntity(String mimeType)
     {
-        ContentType contentType;
         if ( mimeType == null ) {
-            contentType = ContentType.DEFAULT_BINARY;
-        } else {
-            contentType = ContentType.create(mimeType);
+            mimeType = "application/octet-stream";
         }
-        mBuilder.addBinaryBody(FILE_PART_NAME, mFile, contentType, mFile.getName());
-        mBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        mBuilder.setLaxMode().setBoundary("xx").setCharset(Charset.forName("UTF-8"));
+        mContentType = mimeType;
+        mEntity = new MultipartEntity();
+        mEntity.addPart(FILE_PART_NAME, new FileBody(mFile));
+        try {
+            mEntity.addPart("content-type", new StringBody(mContentType, Charset.forName("UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public String getBodyContentType()
     {
-        return mBuilder.build().getContentType().getValue();
+        return mContentType;
     }
 
     @Override
@@ -78,7 +83,7 @@ public class UploadRequest<T> extends Request<T> {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try
         {
-            mBuilder.build().writeTo(bos);
+            mEntity.writeTo(bos);
         }
         catch (IOException e)
         {

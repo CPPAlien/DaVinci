@@ -2,7 +2,7 @@
 Easy using network data transmission library based on Volley, includes image loading, memory/disk caching and http request
 
 ###1, Download aar lib and import to project
-[Download DaVinci-1.0.3](https://github.com/user/repository/raw/master/app/libs/davinci-1.0.3.aar)
+[Download DaVinci-1.0.3](https://github.com/CPPAlien/DaVinci/raw/master/app/libs/davinci-1.0.3.aar)
 
 Add dependency in gradle, note 'libs' is where you put the aar
 

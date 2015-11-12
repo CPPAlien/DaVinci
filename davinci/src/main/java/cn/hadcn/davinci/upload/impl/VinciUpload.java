@@ -30,7 +30,7 @@ public class VinciUpload {
             listener.onDaVinciUploadFailed("Upload file is not exists");
             return;
         }
-        UploadRequest<JSONObject> uploadRequest = new UploadRequest<>(uploadUrl,file,
+        UploadRequest uploadRequest = new UploadRequest(uploadUrl,file,
 
                 new Response.Listener<JSONObject>() {
                     @Override

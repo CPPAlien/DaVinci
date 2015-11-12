@@ -3,6 +3,7 @@ package cn.hadcn.davinci.upload.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
@@ -20,17 +22,19 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
-public class UploadRequest<T> extends Request<T> {
+public class UploadRequest extends Request<JSONObject> {
     private static final String FILE_PART_NAME = "file";
     private static final String BOUNDARY = "----xxxxxxx";
     private static final String CHARSET = "utf-8";
     private MultipartEntity mEntity;
-    private final Response.Listener<T> mListener;
+    private final Response.Listener<JSONObject> mListener;
     protected Map<String, String> headers;
 
-    public UploadRequest(String url, File file, Listener<T> listener, ErrorListener errorListener) {
+    public UploadRequest(String url, File file, Listener<JSONObject> listener, ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
 
         mListener = listener;
@@ -75,14 +79,25 @@ public class UploadRequest<T> extends Request<T> {
     }
 
     @Override
-    protected Response<T> parseNetworkResponse(NetworkResponse response)
+    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response)
     {
-        return Response.success(null, HttpHeaderParser.parseCacheHeaders(response));
+        try {
+            String jsonString = new String(response.data,
+                    HttpHeaderParser.parseCharset(response.headers, CHARSET));
+            return Response.success(new JSONObject(jsonString),
+                    HttpHeaderParser.parseCacheHeaders(response));
+        } catch (UnsupportedEncodingException e) {
+            return Response.error(new ParseError(e));
+        } catch (JSONException je) {
+            return Response.error(new ParseError(je));
+        }
     }
 
     @Override
-    protected void deliverResponse(T response)
+    protected void deliverResponse(JSONObject response)
     {
-        mListener.onResponse(response);
+        if (mListener != null) {
+            mListener.onResponse(response);
+        }
     }
 }

@@ -6,9 +6,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 import cn.hadcn.davinci.base.VinciLog;
-import cn.hadcn.davinci.cache.DaImageLoader;
+import cn.hadcn.davinci.cache.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
-import cn.hadcn.davinci.upload.impl.DaVinciUpload;
+import cn.hadcn.davinci.upload.impl.VinciUpload;
 
 
 /**
@@ -17,8 +17,8 @@ import cn.hadcn.davinci.upload.impl.DaVinciUpload;
  */
 public class DaVinci {
     private static RequestQueue mRequestQueue;
-    private static DaImageLoader mDaImageLoader;
-    private static DaVinciUpload mDaVinciUpload;
+    private static VinciImageLoader mDaImageLoader;
+    private static VinciUpload mDaVinciUpload;
 
     private static DaVinci mDaVinci = null;
 
@@ -58,7 +58,7 @@ public class DaVinci {
      */
     private DaVinci(Context context) {
         mRequestQueue = Volley.newRequestQueue(context);
-        mDaImageLoader = new DaImageLoader(context, mRequestQueue);
+        mDaImageLoader = new VinciImageLoader(context, mRequestQueue);
     }
 
     /**
@@ -77,20 +77,14 @@ public class DaVinci {
         return new HttpRequest(mRequestQueue);
     }
 
-    public DaImageLoader getImageLoader() {
+    public VinciImageLoader getImageLoader() {
         return mDaImageLoader;
     }
 
     /**
-     * get uploader instance
-     * @param contentType like 'text/plain, image/jpeg',  null is binary file,
-     * @return Uploader instance
+     * get uploader instance, default content type is binary
      */
-    public DaVinciUpload getUploader(String contentType) {
-        return new DaVinciUpload(mRequestQueue, contentType);
-    }
-
-    public DaVinciUpload getUploader() {
-        return new DaVinciUpload(mRequestQueue, null);
+    public VinciUpload getUploader() {
+        return new VinciUpload(mRequestQueue);
     }
 }

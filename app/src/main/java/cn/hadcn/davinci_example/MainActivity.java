@@ -7,13 +7,16 @@ import android.widget.ImageView;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.hadcn.davinci.DaVinci;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
+import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
 
-public class MainActivity extends AppCompatActivity implements OnDaVinciRequestListener{
+public class MainActivity extends AppCompatActivity implements OnDaVinciRequestListener, OnDaVinciUploadListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,9 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
         ImageView imageView = (ImageView)findViewById(R.id.image_view);
         DaVinci.with(this).getImageLoader().load(imageView, "https://cdn-images-1.medium.com/max/800/1*dWGwx6UUjc0tocYzFNBLEw.jpeg");
+
+        String path = "/storage/emulated/0/360/test.png";
+        DaVinci.with(this).getUploader().uploadMultiMedia("http://192.168.2.171:12521/quicksilver/openapi/web/file/upload", path, this);
     }
 
     @Override
@@ -37,5 +43,15 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
     @Override
     public void onDaVinciRequestFailed(String errorInfo) {
 
+    }
+
+    @Override
+    public void onDaVinciUploadSuccess(JSONObject response) {
+
+    }
+
+    @Override
+    public void onDaVinciUploadFailed(String reason) {
+        Log.e("DaVinciTest", " upload failed reason = " + reason);
     }
 }

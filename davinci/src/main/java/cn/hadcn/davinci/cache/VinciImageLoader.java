@@ -17,7 +17,7 @@ import cn.hadcn.davinci.R;
  * DaImageLoader
  * Created by 90Chris on 2015/9/11.
  */
-public class DaImageLoader {
+public class VinciImageLoader {
     final int DEFAULT_IMAGE_LOADING = R.drawable.image_loading;
     final int DEFAULT_IMAGE_ERROR = R.drawable.image_load_error;
     private ImageLoader.ImageCache mImageCache;
@@ -25,7 +25,7 @@ public class DaImageLoader {
     private Context mContext;
     private int mMaxSize = 0;
 
-    public DaImageLoader(Context context, RequestQueue requestQueue) {
+    public VinciImageLoader(Context context, RequestQueue requestQueue) {
         mContext = context;
         mImageCache= new DiskLruImageCache(context, context.getPackageCodePath(),
                 1024 * 1024 * 20, Bitmap.CompressFormat.PNG, 30);
@@ -61,7 +61,7 @@ public class DaImageLoader {
      * @param maxPix max pixels of height and width
      * @return DaImageLoader instance
      */
-    public DaImageLoader resize(int maxPix) {
+    public VinciImageLoader resize(int maxPix) {
         mMaxSize = maxPix;
         return this;
     }

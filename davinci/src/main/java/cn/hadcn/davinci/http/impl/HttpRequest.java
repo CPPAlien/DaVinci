@@ -106,16 +106,17 @@ public class HttpRequest {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(volleyWay, requestUrl, postJsonData,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        VinciLog.i("http response:" + jsonObject.toString());
-                        requestListener.onDaVinciRequestSuccess(jsonObject);
+                    public void onResponse(JSONObject response) {
+                        VinciLog.i("http response:" + (response == null ? null : response.toString()));
+                        requestListener.onDaVinciRequestSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        VinciLog.e(volleyError.toString());
-                        requestListener.onDaVinciRequestFailed(String.valueOf(volleyError.networkResponse.statusCode));
+                    public void onErrorResponse(VolleyError error) {
+                        String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
+                        VinciLog.e("upload failed: " + reason);
+                        requestListener.onDaVinciRequestFailed(reason);
                     }
                 }) {
             @Override

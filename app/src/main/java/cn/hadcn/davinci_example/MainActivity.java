@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Map<String, Object> map = new HashMap<>();
         map.put("q", "Beijing,cn");
         map.put("appid", "2de143494c0b295cca9337e1e96b00e0");

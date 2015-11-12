@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         DaVinci.with(this).getImageLoader().load(imageView, "https://cdn-images-1.medium.com/max/800/1*dWGwx6UUjc0tocYzFNBLEw.jpeg");
 
         String path = "/storage/emulated/0/360/test.png";
-        DaVinci.with(this).getUploader().uploadMultiMedia("http://192.168.2.171:12521/quicksilver/openapi/web/file/upload", path, this);
+        DaVinci.with(this).getUploader().uploadFile("http://192.168.1.103:12521/quicksilver/openapi/web/file/upload", path, this);
     }
 
     @Override

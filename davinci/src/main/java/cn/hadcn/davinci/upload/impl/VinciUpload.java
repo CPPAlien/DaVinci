@@ -18,19 +18,34 @@ import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
  */
 public class VinciUpload {
     RequestQueue mRequestQueue;
+    private String mFilePartName = null;
 
     public VinciUpload(RequestQueue mRequestQueue) {
         this.mRequestQueue = mRequestQueue;
     }
 
-    public void uploadMultiMedia(String uploadUrl, String mediaPath, final OnDaVinciUploadListener listener) {
-        File file = new File(mediaPath);
+    /**
+     * name of file in form data
+     * @param name default is 'file'
+     */
+    public void filePartName(String name) {
+        mFilePartName = name;
+    }
+
+    /**
+     * upload file to server
+     * @param uploadUrl file server url
+     * @param filePath  local file path
+     * @param listener listener of uploading
+     */
+    public void uploadFile(String uploadUrl, String filePath, final OnDaVinciUploadListener listener) {
+        File file = new File(filePath);
         if ( !file.exists() ) {
             VinciLog.e("Upload file is not exists");
             listener.onDaVinciUploadFailed("Upload file is not exists");
             return;
         }
-        UploadRequest uploadRequest = new UploadRequest(uploadUrl,file,
+        UploadRequest uploadRequest = new UploadRequest(uploadUrl,mFilePartName, file,
 
                 new Response.Listener<JSONObject>() {
                     @Override

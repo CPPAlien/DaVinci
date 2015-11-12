@@ -34,13 +34,16 @@ public class UploadRequest extends Request<JSONObject> {
     private final Response.Listener<JSONObject> mListener;
     protected Map<String, String> headers;
 
-    public UploadRequest(String url, File file, Listener<JSONObject> listener, ErrorListener errorListener) {
+    public UploadRequest(String url, String filePartName, File file, Listener<JSONObject> listener, ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
 
         mListener = listener;
 
         mEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, BOUNDARY, Charset.forName(CHARSET));
-        mEntity.addPart(FILE_PART_NAME, new FileBody(file, "application/octet-stream", CHARSET));
+        if ( null == filePartName ) {
+            filePartName = FILE_PART_NAME;
+        }
+        mEntity.addPart(filePartName, new FileBody(file, "application/octet-stream", CHARSET));
     }
 
     @Override

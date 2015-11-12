@@ -28,6 +28,6 @@ repositories{
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.1.0'
-    //compile(name:'davinci-1.0.3', ext:'aar')
+    //compile(name:'davinci-1.0.4', ext:'aar')
     compile project(':davinci')
 }

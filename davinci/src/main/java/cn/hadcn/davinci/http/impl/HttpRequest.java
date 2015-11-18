@@ -115,7 +115,7 @@ public class HttpRequest {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
-                        VinciLog.e("upload failed: " + reason);
+                        VinciLog.e("http failed: " + reason);
                         requestListener.onDaVinciRequestFailed(reason);
                     }
                 }) {

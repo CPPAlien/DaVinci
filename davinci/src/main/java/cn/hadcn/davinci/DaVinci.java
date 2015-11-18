@@ -18,7 +18,6 @@ import cn.hadcn.davinci.upload.impl.VinciUpload;
 public class DaVinci {
     private static RequestQueue mRequestQueue;
     private static VinciImageLoader mDaImageLoader;
-    private static VinciUpload mDaVinciUpload;
 
     private static DaVinci mDaVinci = null;
 

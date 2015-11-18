@@ -2,7 +2,6 @@
 Easy using network data transmission library based on Volley, includes image loading, memory/disk caching and http request
 
 ###1, How to Use
-[Download DaVinci-1.0.4 release](https://github.com/CPPAlien/DaVinci/raw/master/app/libs/davinci-1.0.4.aar)
 
 use maven to import dependency in gradle
 

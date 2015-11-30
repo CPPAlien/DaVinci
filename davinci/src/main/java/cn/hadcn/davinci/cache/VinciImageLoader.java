@@ -10,6 +10,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
+import java.io.File;
+
 import cn.hadcn.davinci.R;
 
 
@@ -18,31 +20,43 @@ import cn.hadcn.davinci.R;
  * Created by 90Chris on 2015/9/11.
  */
 public class VinciImageLoader {
-    final int DEFAULT_IMAGE_LOADING = R.drawable.image_loading;
-    final int DEFAULT_IMAGE_ERROR = R.drawable.image_load_error;
+    private final int DEFAULT_IMAGE_LOADING = R.drawable.image_loading;
+    private final int DEFAULT_IMAGE_ERROR = R.drawable.image_load_error;
+    private String mCacheDir = null;
     private ImageLoader.ImageCache mImageCache;
     private ImageLoader mImageLoader;
     private Context mContext;
     private int mMaxSize = 0;
 
     public VinciImageLoader(Context context, RequestQueue requestQueue) {
+        mCacheDir = getDiskCacheDir(context);
         mContext = context;
-        mImageCache= new DiskLruImageCache(context, context.getPackageCodePath(),
+        mImageCache= new DiskLruImageCache(mCacheDir,
                 1024 * 1024 * 20, Bitmap.CompressFormat.PNG, 30);
         mImageLoader = new ImageLoader(requestQueue, mImageCache);
     }
 
-    public Bitmap getBitmap(String url) {
+    private String getDiskCacheDir(Context context) {
+        final String CACHE_DIR_NAME = "imgCache";
+        final String cachePath = context.getCacheDir().getPath();
+        return cachePath + File.separator + CACHE_DIR_NAME;
+    }
+
+    public String getAbsolutePath(String key) {
+        return mCacheDir + File.separator + key;
+    }
+
+    public Bitmap getBitmap(String key) {
         try {
-            return mImageCache.getBitmap(url);
+            return mImageCache.getBitmap(key);
         } catch (NullPointerException e) {
             throw new IllegalStateException("Disk Cache Not initialized");
         }
     }
 
-    public void putBitmap(String url, Bitmap bitmap) {
+    public void putBitmap(String key, Bitmap bitmap) {
         try {
-            mImageCache.putBitmap(url, bitmap);
+            mImageCache.putBitmap(key, bitmap);
         } catch (NullPointerException e) {
             throw new IllegalStateException("Disk Cache Not initialized");
         }

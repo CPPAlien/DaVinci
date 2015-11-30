@@ -21,7 +21,7 @@ import cn.hadcn.davinci.base.VinciLog;
 
 /**
  * Implementation of DiskLruCache by Jake Wharton
- * modified 90Chris
+ * modified by 90Chris
  */
 public class DiskLruImageCache implements ImageCache {
     private DiskLruCache mDiskCache;
@@ -32,10 +32,10 @@ public class DiskLruImageCache implements ImageCache {
     private static final int APP_VERSION = 1;
     private static final int VALUE_COUNT = 1;
 
-    public DiskLruImageCache(Context context, String uniqueName, int diskCacheSize,
+    public DiskLruImageCache( String cachePath, int diskCacheSize,
                              CompressFormat compressFormat, int quality) {
         try {
-                final File diskCacheDir = getDiskCacheDir(context, uniqueName);
+                final File diskCacheDir = new File(cachePath);;
                 mMemoryCache = new BitmapLruImageCache(diskCacheSize);
                 mDiskCache = DiskLruCache.open( diskCacheDir, APP_VERSION, VALUE_COUNT, diskCacheSize );
                 mCompressFormat = compressFormat;
@@ -55,11 +55,6 @@ public class DiskLruImageCache implements ImageCache {
                 out.close();
             }
         }
-    }
-
-    private File getDiskCacheDir(Context context, String uniqueName) {
-        final String cachePath = context.getCacheDir().getPath();
-        return new File(cachePath + File.separator + uniqueName);
     }
 
     @Override

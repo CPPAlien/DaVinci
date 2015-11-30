@@ -11,6 +11,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cn.hadcn.davinci.R;
 
@@ -42,21 +44,21 @@ public class VinciImageLoader {
         return cachePath + File.separator + CACHE_DIR_NAME;
     }
 
-    public String getAbsolutePath(String key) {
-        return mCacheDir + File.separator + key;
+    public String getAbsolutePath( String fileName ) {
+        return mCacheDir + File.separator + generateKey(fileName);
     }
 
-    public Bitmap getBitmap(String key) {
+    public Bitmap getBitmap(String name) {
         try {
-            return mImageCache.getBitmap(key);
+            return mImageCache.getBitmap(generateKey(name));
         } catch (NullPointerException e) {
             throw new IllegalStateException("Disk Cache Not initialized");
         }
     }
 
-    public void putBitmap(String key, Bitmap bitmap) {
+    public void putBitmap(String name, Bitmap bitmap) {
         try {
-            mImageCache.putBitmap(key, bitmap);
+            mImageCache.putBitmap(generateKey(name), bitmap);
         } catch (NullPointerException e) {
             throw new IllegalStateException("Disk Cache Not initialized");
         }
@@ -100,7 +102,7 @@ public class VinciImageLoader {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            return mImageCache.getBitmap( mImageUrl );
+            return mImageCache.getBitmap( generateKey(mImageUrl) );
         }
 
         @Override
@@ -148,7 +150,7 @@ public class VinciImageLoader {
                     }
                 }
 
-                mImageCache.putBitmap(response.getRequestUrl(), bitmap);
+                mImageCache.putBitmap(generateKey(response.getRequestUrl()), bitmap);
                 mImageView.setImageBitmap(bitmap);
             } else {
                 mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mLoadingImage));
@@ -158,6 +160,27 @@ public class VinciImageLoader {
         @Override
         public void onErrorResponse(VolleyError error) {
             mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mErrorImage));
+        }
+    }
+
+    /**
+     * Creates a unique cache key based on a url value
+     * file name in linux is limited
+     * @param uri
+     * 		uri to be used in key creation
+     * @return
+     * 		cache key value
+     */
+    public String generateKey(String uri){
+        String regEx = "[^a-z0-9_-]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(uri);
+        String key = m.replaceAll("").trim();
+        int length = key.length();
+        if ( length <= 120 ) {  //limited by DisLruCache
+            return key;
+        } else {
+            return key.substring(0, 120);
         }
     }
 }

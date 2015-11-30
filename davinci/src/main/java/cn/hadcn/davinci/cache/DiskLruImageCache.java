@@ -1,6 +1,5 @@
 package cn.hadcn.davinci.cache;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -13,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import cn.hadcn.davinci.base.VinciLog;
 
@@ -59,10 +56,10 @@ public class DiskLruImageCache implements ImageCache {
 
     @Override
     public void putBitmap( String key, Bitmap data ) {
-        mMemoryCache.putBitmap(createKey(key), data);
+        mMemoryCache.putBitmap(key, data);
         DiskLruCache.Editor editor = null;
         try {
-            editor = mDiskCache.edit( createKey(key) );
+            editor = mDiskCache.edit( key );
             if ( editor == null ) {
                 return;
             }
@@ -88,14 +85,14 @@ public class DiskLruImageCache implements ImageCache {
 
     @Override
     public Bitmap getBitmap( String key ) {
-        Bitmap bitmap = mMemoryCache.getBitmap(createKey(key));
+        Bitmap bitmap = mMemoryCache.getBitmap(key);
         if ( bitmap != null ) {
             return bitmap;
         }
 
         DiskLruCache.Snapshot snapshot = null;
         try {
-            snapshot = mDiskCache.get( createKey(key) );
+            snapshot = mDiskCache.get( key );
             if ( snapshot == null ) {
                 return null;
             }
@@ -103,7 +100,7 @@ public class DiskLruImageCache implements ImageCache {
             if ( in != null ) {
                 final BufferedInputStream buffIn = new BufferedInputStream( in, IO_BUFFER_SIZE );
                 bitmap = BitmapFactory.decodeStream(buffIn);
-                mMemoryCache.putBitmap(createKey(key), bitmap);
+                mMemoryCache.putBitmap(key, bitmap);
             }
         } catch ( IOException e ) {
             e.printStackTrace();
@@ -115,46 +112,6 @@ public class DiskLruImageCache implements ImageCache {
         VinciLog.d(bitmap == null ? "bitmap is null" : "image read from disk " + key);
 
         return bitmap;
-    }
-
-
-
-    public boolean containsKey( String key ) {
-
-        boolean contained = false;
-        DiskLruCache.Snapshot snapshot = null;
-        try {
-            snapshot = mDiskCache.get( key );
-            contained = snapshot != null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if ( snapshot != null ) {
-                snapshot.close();
-            }
-        }
-
-        return contained;
-
-    }
-    /**
-     * Creates a unique cache key based on a url value
-     * @param url
-     * 		url to be used in key creation
-     * @return
-     * 		cache key value
-     */
-    private String createKey(String url){
-        String regEx = "[^a-z0-9_-]";
-        Pattern p = Pattern.compile(regEx);
-        Matcher m = p.matcher(url);
-        String key = m.replaceAll("").trim();
-        int length = key.length();
-        if ( length <= 120 ) {  //limited by DisLruCache
-            return key;
-        } else {
-            return key.substring(0, 120);
-        }
     }
 
 

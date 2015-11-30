@@ -55,7 +55,8 @@ public class DiskLruImageCache implements ImageCache {
     }
 
     @Override
-    public void putBitmap( String key, Bitmap data ) {
+    public void putBitmap( String name, Bitmap data ) {
+        String key = Util.generateKey(name);
         mMemoryCache.putBitmap(key, data);
         DiskLruCache.Editor editor = null;
         try {
@@ -84,7 +85,8 @@ public class DiskLruImageCache implements ImageCache {
     }
 
     @Override
-    public Bitmap getBitmap( String key ) {
+    public Bitmap getBitmap( String name ) {
+        String key = Util.generateKey(name);
         Bitmap bitmap = mMemoryCache.getBitmap(key);
         if ( bitmap != null ) {
             return bitmap;

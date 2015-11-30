@@ -11,8 +11,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import cn.hadcn.davinci.R;
 
@@ -45,12 +43,12 @@ public class VinciImageLoader {
     }
 
     public String getAbsolutePath( String fileName ) {
-        return mCacheDir + File.separator + generateKey(fileName);
+        return mCacheDir + File.separator + Util.generateKey(fileName) + ".0";
     }
 
     public Bitmap getBitmap(String name) {
         try {
-            return mImageCache.getBitmap(generateKey(name));
+            return mImageCache.getBitmap(name);
         } catch (NullPointerException e) {
             throw new IllegalStateException("Disk Cache Not initialized");
         }
@@ -58,7 +56,7 @@ public class VinciImageLoader {
 
     public void putBitmap(String name, Bitmap bitmap) {
         try {
-            mImageCache.putBitmap(generateKey(name), bitmap);
+            mImageCache.putBitmap(name, bitmap);
         } catch (NullPointerException e) {
             throw new IllegalStateException("Disk Cache Not initialized");
         }
@@ -102,7 +100,7 @@ public class VinciImageLoader {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            return mImageCache.getBitmap( generateKey(mImageUrl) );
+            return mImageCache.getBitmap( mImageUrl );
         }
 
         @Override
@@ -150,7 +148,7 @@ public class VinciImageLoader {
                     }
                 }
 
-                mImageCache.putBitmap(generateKey(response.getRequestUrl()), bitmap);
+                mImageCache.putBitmap(response.getRequestUrl(), bitmap);
                 mImageView.setImageBitmap(bitmap);
             } else {
                 mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mLoadingImage));
@@ -160,27 +158,6 @@ public class VinciImageLoader {
         @Override
         public void onErrorResponse(VolleyError error) {
             mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mErrorImage));
-        }
-    }
-
-    /**
-     * Creates a unique cache key based on a url value
-     * file name in linux is limited
-     * @param uri
-     * 		uri to be used in key creation
-     * @return
-     * 		cache key value
-     */
-    public String generateKey(String uri){
-        String regEx = "[^a-z0-9_-]";
-        Pattern p = Pattern.compile(regEx);
-        Matcher m = p.matcher(uri);
-        String key = m.replaceAll("").trim();
-        int length = key.length();
-        if ( length <= 120 ) {  //limited by DisLruCache
-            return key;
-        } else {
-            return key.substring(0, 120);
         }
     }
 }

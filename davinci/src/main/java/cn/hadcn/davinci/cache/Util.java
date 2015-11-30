@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Junk drawer of utility methods. */
 final class Util {
@@ -72,6 +74,27 @@ final class Util {
         throw rethrown;
       } catch (Exception ignored) {
       }
+    }
+  }
+
+  /**
+   * Creates a unique cache key based on a url value
+   * file name in linux is limited
+   * @param uri
+   * 		uri to be used in key creation
+   * @return
+   * 		cache key value
+   */
+  public static String generateKey(String uri) {
+    String regEx = "[^a-z0-9_-]";
+    Pattern p = Pattern.compile(regEx);
+    Matcher m = p.matcher(uri);
+    String key = m.replaceAll("").trim();
+    int length = key.length();
+    if ( length <= 120 ) {  //limited by DisLruCache
+      return key;
+    } else {
+      return key.substring(0, 120);
     }
   }
 }

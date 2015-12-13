@@ -1,12 +1,13 @@
 package cn.hadcn.davinci.http.impl;
 
+import android.content.Context;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
@@ -22,13 +23,15 @@ import cn.hadcn.davinci.http.OnDaVinciRequestListener;
  * Created by 90Chris on 2015/1/26.
  * */
 public class HttpRequest {
-    RequestQueue mRequestQueue;
-    Map<String, String> mHeadersMap = null;
-    int mTimeOutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
-    int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
+    private RequestQueue mRequestQueue;
+    private Map<String, String> mHeadersMap = null;
+    private int mTimeOutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
+    private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
+    private Context mContext;
 
-    public HttpRequest(RequestQueue requestQueue) {
+    public HttpRequest(Context context, RequestQueue requestQueue) {
         mRequestQueue = requestQueue;
+        mContext = context;
     }
 
     public HttpRequest setTimesOut(int timesOutMs) {
@@ -103,7 +106,7 @@ public class HttpRequest {
         }
 
         VinciLog.i("send request:" + requestUrl);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(volleyWay, requestUrl, postJsonData,
+        JsonVinciRequest jsonObjectRequest = new JsonVinciRequest(volleyWay, requestUrl, postJsonData,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -121,14 +124,18 @@ public class HttpRequest {
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> mapHeaders = super.getHeaders();
                 if ( mHeadersMap != null ) {
-                    return mHeadersMap;
+                    for ( String key : mHeadersMap.keySet() ) {
+                        mapHeaders.put(key, mHeadersMap.get(key));
+                    }
                 }
-                return super.getHeaders();
+                return mapHeaders;
             }
 
 
         };
+        jsonObjectRequest.enableCookie(true, mContext);
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(mTimeOutMs, mMaxRetries, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(jsonObjectRequest);
     }

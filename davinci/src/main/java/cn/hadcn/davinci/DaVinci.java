@@ -20,6 +20,7 @@ public class DaVinci {
     private static VinciImageLoader mDaImageLoader;
 
     private static DaVinci mDaVinci = null;
+    private Context mContext;
 
     public static DaVinci with(Context context) {
         if ( mDaVinci == null ) {
@@ -29,7 +30,7 @@ public class DaVinci {
     }
 
     /**
-     * if you want to use this way, you must call DaVinci.init() before using it
+     * if you want to use this way, you must call DaVinci.init(Context) before using it
      * @return DaVinci instance
      */
     public static DaVinci with() {
@@ -56,6 +57,7 @@ public class DaVinci {
      * @param context context
      */
     private DaVinci(Context context) {
+        mContext = context;
         mRequestQueue = Volley.newRequestQueue(context);
         mDaImageLoader = new VinciImageLoader(context, mRequestQueue);
     }
@@ -73,7 +75,7 @@ public class DaVinci {
      * @return HttpRequest
      */
     public HttpRequest getHttpRequest(){
-        return new HttpRequest(mRequestQueue);
+        return new HttpRequest(mContext, mRequestQueue);
     }
 
     public VinciImageLoader getImageLoader() {

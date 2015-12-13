@@ -1,5 +1,6 @@
 # DaVinci
-Easy using network data transmission library based on Volley, includes image loading, memory/disk caching and http request
+Full set of solutions to network data transmission; 
+The library is based on Volley, including image loading, memory/disk caching, http request, uploading file, and Cookies
 
 ###1, How to Use
 
@@ -10,9 +11,19 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.0.4'
+    compile 'com.github.CPPAlien:DaVinci:1.0.5'
 }
 ```
+
+Release Notes
+1.0.5
+Adding Cookies in http Request
+If you want to save cookie and use cookie in each requests, 
+you can just call DaVinci.with(Context).enableCookie(); method before each requests.
+
+1.0.4
+Adding Uploader Function
+implemented by data-form
 
 ###2, Implement GET or POST request
 ```
@@ -52,9 +63,13 @@ DaVinci.init(Context);
 before each calling, usually you can put it in Application's onCreate method.
 
 ###2, Other settings
-enable Debuging
+enable Debuging, tag is printed tag in LogCat.
 ```
-DaVinci.enableDebug(String tag);
+DaVinci.with(Context).enableDebug(String tag);
+```
+enable Cookies
+```
+DaVinci.with(Context).enableCookie();
 ```
 add http request headers
 ```

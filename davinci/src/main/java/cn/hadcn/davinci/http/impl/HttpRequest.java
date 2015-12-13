@@ -28,10 +28,12 @@ public class HttpRequest {
     private int mTimeOutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
     private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
     private Context mContext;
+    private boolean isEnableCookie = false;
 
-    public HttpRequest(Context context, RequestQueue requestQueue) {
+    public HttpRequest(Context context, RequestQueue requestQueue, boolean enableCookie) {
         mRequestQueue = requestQueue;
         mContext = context;
+        isEnableCookie = enableCookie;
     }
 
     public HttpRequest setTimesOut(int timesOutMs) {
@@ -135,7 +137,7 @@ public class HttpRequest {
 
 
         };
-        jsonObjectRequest.enableCookie(true, mContext);
+        jsonObjectRequest.enableCookie(isEnableCookie, mContext);
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(mTimeOutMs, mMaxRetries, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(jsonObjectRequest);
     }

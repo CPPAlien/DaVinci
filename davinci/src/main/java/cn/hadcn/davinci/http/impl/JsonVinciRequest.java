@@ -159,7 +159,7 @@ public class JsonVinciRequest extends JsonRequest<JSONObject> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        if (isCookieEnabled) {
+        if ( isCookieEnabled ) {
             // if cookie isn't saved in memory cache, get it from disk cache
             if (mCookie == null) {
                 mCookie = CookiePref.getInstance(mContext).getCookie();

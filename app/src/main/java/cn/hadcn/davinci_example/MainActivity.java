@@ -7,8 +7,6 @@ import android.widget.ImageView;
 
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         Map<String, Object> map = new HashMap<>();
         map.put("q", "Beijing,cn");
         map.put("appid", "2de143494c0b295cca9337e1e96b00e0");
-        DaVinci.enableDebug("DaVinciTest");
+        DaVinci.with(this).enableDebug("DaVinciTest");
+        DaVinci.with(this).enableCookie();
         DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
 
         ImageView imageView = (ImageView)findViewById(R.id.image_view);

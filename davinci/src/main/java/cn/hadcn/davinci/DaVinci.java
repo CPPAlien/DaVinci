@@ -21,6 +21,7 @@ public class DaVinci {
 
     private static DaVinci mDaVinci = null;
     private Context mContext;
+    private boolean isEnableCookie = false;
 
     public static DaVinci with(Context context) {
         if ( mDaVinci == null ) {
@@ -63,11 +64,20 @@ public class DaVinci {
     }
 
     /**
-     * enable log display
+     * enable Log printed in Logcat
+     * @param tag tag of log
      */
-    public static void enableDebug(String tag) {
+    public void enableDebug(String tag) {
         VinciLog.enableLog = true;
         VinciLog.LOG_TAG = tag;
+    }
+
+    /**
+     * enable cookie, save cookie when response header contains Set-Cookie
+     * add Cookie header when sending request
+     */
+    public void enableCookie() {
+        isEnableCookie = true;
     }
 
     /**
@@ -75,7 +85,7 @@ public class DaVinci {
      * @return HttpRequest
      */
     public HttpRequest getHttpRequest(){
-        return new HttpRequest(mContext, mRequestQueue);
+        return new HttpRequest(mContext, mRequestQueue, isEnableCookie);
     }
 
     public VinciImageLoader getImageLoader() {

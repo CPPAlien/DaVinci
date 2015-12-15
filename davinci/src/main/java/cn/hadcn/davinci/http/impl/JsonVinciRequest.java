@@ -32,6 +32,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -46,9 +50,6 @@ import cn.hadcn.davinci.base.VinciLog;
  */
 public class JsonVinciRequest extends JsonRequest<JSONObject> {
     private Map<String, String> mHeadersMap = new HashMap<>();
-    private String mCookie = null;
-    private boolean isCookieEnabled = false;
-    private Context mContext;
 
     /**
      * Creates a new request.
@@ -119,20 +120,6 @@ public class JsonVinciRequest extends JsonRequest<JSONObject> {
             String jsonString = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
 
-            if ( isCookieEnabled ) {
-                // check is there a planting cookie tag of Set-Cookie
-
-                VinciLog.d("receive headers = " + response.headers.toString());
-
-                String cookie = response.headers.get("Set-Cookie");
-                if ( cookie != null ) {
-                    VinciLog.d("cookies from server " + cookie);
-                    // save cookie both in memory and disk caches
-                    mCookie = cookie;
-                    CookiePref.getInstance(mContext).saveCookie(mCookie);
-                }
-            }
-
             return Response.success(new JSONObject(jsonString),
                     HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
@@ -143,29 +130,16 @@ public class JsonVinciRequest extends JsonRequest<JSONObject> {
     }
 
     /**
-     * enable cookie
-     * @param enable enable cookie or not, true, enable; false, disable
-     * @param context context, if null, cookie will not be enabled
+     * set Cookie Header
+     * @param cookie cookie content
      */
-    public void enableCookie(boolean enable, Context context) {
-        isCookieEnabled = enable;
-        mContext = context;
-        if ( context == null ) {
-            isCookieEnabled = false;
-        }
+    public void setCookie( String cookie ) {
+        VinciLog.d("Put Cookie:" + cookie);
+        mHeadersMap.put("Cookie", cookie);
     }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        if ( isCookieEnabled ) {
-            // if cookie isn't saved in memory cache, get it from disk cache
-            if (mCookie == null) {
-                mCookie = CookiePref.getInstance(mContext).getCookie();
-            }
-            if (mCookie != null) {
-                mHeadersMap.put("Cookie", mCookie);
-            }
-        }
         return mHeadersMap;
     }
 }

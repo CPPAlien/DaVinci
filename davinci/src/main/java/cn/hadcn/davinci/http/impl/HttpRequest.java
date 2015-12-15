@@ -27,13 +27,13 @@ public class HttpRequest {
     private Map<String, String> mHeadersMap = null;
     private int mTimeOutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
     private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
-    private Context mContext;
     private boolean isEnableCookie = false;
+    private String mCookie = null;
 
-    public HttpRequest(Context context, RequestQueue requestQueue, boolean enableCookie) {
+    public HttpRequest( RequestQueue requestQueue, boolean enableCookie, String cookie) {
         mRequestQueue = requestQueue;
-        mContext = context;
         isEnableCookie = enableCookie;
+        mCookie = cookie;
     }
 
     public HttpRequest setTimesOut(int timesOutMs) {
@@ -113,7 +113,9 @@ public class HttpRequest {
                     @Override
                     public void onResponse(JSONObject response) {
                         VinciLog.i("http response:" + (response == null ? null : response.toString()));
-                        requestListener.onDaVinciRequestSuccess(response);
+                        if ( requestListener != null ) {
+                            requestListener.onDaVinciRequestSuccess(response);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -121,7 +123,9 @@ public class HttpRequest {
                     public void onErrorResponse(VolleyError error) {
                         String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
                         VinciLog.e("http failed: " + reason);
-                        requestListener.onDaVinciRequestFailed(reason);
+                        if ( requestListener != null ) {
+                            requestListener.onDaVinciRequestFailed(reason);
+                        }
                     }
                 }) {
             @Override
@@ -137,7 +141,9 @@ public class HttpRequest {
 
 
         };
-        jsonObjectRequest.enableCookie(isEnableCookie, mContext);
+        if ( isEnableCookie ) {
+            jsonObjectRequest.setCookie( mCookie );
+        }
         jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(mTimeOutMs, mMaxRetries, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(jsonObjectRequest);
     }

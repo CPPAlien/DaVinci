@@ -5,6 +5,11 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
+
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.cache.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
@@ -22,6 +27,7 @@ public class DaVinci {
     private static DaVinci mDaVinci = null;
     private Context mContext;
     private boolean isEnableCookie = false;
+    private CookieManager mCookieManager = null;
 
     public static DaVinci with(Context context) {
         if ( mDaVinci == null ) {
@@ -78,6 +84,10 @@ public class DaVinci {
      */
     public void enableCookie() {
         isEnableCookie = true;
+        if ( mCookieManager == null ) {
+            mCookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+            CookieHandler.setDefault(mCookieManager);
+        }
     }
 
     /**
@@ -85,7 +95,21 @@ public class DaVinci {
      * @return HttpRequest
      */
     public HttpRequest getHttpRequest(){
-        return new HttpRequest(mContext, mRequestQueue, isEnableCookie);
+        String cookieString = null;
+        if ( isEnableCookie ) {
+            StringBuilder cookieBuilder = new StringBuilder();
+            String divider = "";
+            for (HttpCookie cookie : mCookieManager.getCookieStore().getCookies()) {
+                cookieBuilder.append(divider);
+                divider = ";";
+                cookieBuilder.append(cookie.getName());
+                cookieBuilder.append("=");
+                cookieBuilder.append(cookie.getValue());
+            }
+
+            cookieString = cookieBuilder.toString();
+        }
+        return new HttpRequest( mRequestQueue, isEnableCookie, cookieString );
     }
 
     public VinciImageLoader getImageLoader() {

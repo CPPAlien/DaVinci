@@ -13,6 +13,7 @@ import java.net.HttpCookie;
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.cache.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
+import cn.hadcn.davinci.http.impl.PersistentCookieStore;
 import cn.hadcn.davinci.upload.impl.VinciUpload;
 
 
@@ -23,11 +24,10 @@ import cn.hadcn.davinci.upload.impl.VinciUpload;
 public class DaVinci {
     private static RequestQueue mRequestQueue;
     private static VinciImageLoader mDaImageLoader;
-
     private static DaVinci mDaVinci = null;
-    private Context mContext;
     private boolean isEnableCookie = false;
     private CookieManager mCookieManager = null;
+    private Context mContext = null;
 
     public static DaVinci with(Context context) {
         if ( mDaVinci == null ) {
@@ -85,7 +85,7 @@ public class DaVinci {
     public void enableCookie() {
         isEnableCookie = true;
         if ( mCookieManager == null ) {
-            mCookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
+            mCookieManager = new CookieManager(new PersistentCookieStore(mContext), CookiePolicy.ACCEPT_ALL);
             CookieHandler.setDefault(mCookieManager);
         }
     }
@@ -97,6 +97,9 @@ public class DaVinci {
     public HttpRequest getHttpRequest(){
         String cookieString = null;
         if ( isEnableCookie ) {
+            // cookie may be changed at any request, so get the cookie from memory first
+            // if cookie is empty, get it from disk, else save it.
+            // because the default CookieStoreImpl doesn't implement local save
             StringBuilder cookieBuilder = new StringBuilder();
             String divider = "";
             for (HttpCookie cookie : mCookieManager.getCookieStore().getCookies()) {

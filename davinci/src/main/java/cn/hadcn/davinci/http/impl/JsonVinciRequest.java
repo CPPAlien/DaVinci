@@ -16,9 +16,6 @@
 
 package cn.hadcn.davinci.http.impl;
 
-
-import android.content.Context;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -32,16 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import cn.hadcn.davinci.base.CookiePref;
 import cn.hadcn.davinci.base.VinciLog;
 
 /**

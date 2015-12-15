@@ -24,6 +24,9 @@ Add Cookies Management in http Request
 If you want to save cookie and use cookie in each requests, 
 you can just call DaVinci.with(Context).enableCookie(); method before each requests.
 
+Tips: The Cookies management isn't identical as a browser's. It can only deal with one Set-Cookie header of
+a response, and will cover the old cookies. It's not like the browser can set cookies value by cookies' keys.
+
 #####1.0.4
 Add Uploader Function implemented by data-form
 

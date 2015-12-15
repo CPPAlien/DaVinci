@@ -121,16 +121,14 @@ public class JsonVinciRequest extends JsonRequest<JSONObject> {
 
             if ( isCookieEnabled ) {
                 // check is there a planting cookie tag of Set-Cookie
-                String header = response.headers.toString();
-                VinciLog.d("receive headers = " + header);
-                Pattern pattern = Pattern.compile("Set-Cookie.*;");
-                Matcher m = pattern.matcher(header);
-                if ( m.find() ) {
-                    String cookieFromResponse = m.group();
-                    VinciLog.d("cookie from server " + cookieFromResponse);
-                    //get cookie content, cut header "Set-Cookie:" and tail ";"
-                    //and save cookie to memory cache and disk cache
-                    mCookie = cookieFromResponse.substring(11, cookieFromResponse.length() - 1);
+
+                VinciLog.d("receive headers = " + response.headers.toString());
+
+                String cookie = response.headers.get("Set-Cookie");
+                if ( cookie != null ) {
+                    VinciLog.d("cookies from server " + cookie);
+                    // save cookie both in memory and disk caches
+                    mCookie = cookie;
                     CookiePref.getInstance(mContext).saveCookie(mCookie);
                 }
             }

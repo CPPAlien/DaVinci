@@ -17,6 +17,11 @@ dependencies {
 
 ####Release Notes
 
+#####1.0.6
+Use CookieHandler to manage cookies, 
+
+Thanks for Fran Montiel who wrote the PersistentCookieStore(https://gist.github.com/franmontiel/ed12a2295566b7076161)
+
 #####1.0.5
 
 Add Cookies Management in http Request

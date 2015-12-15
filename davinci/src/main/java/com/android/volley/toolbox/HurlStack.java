@@ -136,7 +136,7 @@ public class HurlStack implements HttpStack {
      * @return whether the response has a body
      */
     private static boolean hasResponseBody(int requestMethod, int responseCode) {
-        return requestMethod != Request.Method.HEAD
+        return requestMethod != Method.HEAD
             && !(HttpStatus.SC_CONTINUE <= responseCode && responseCode < HttpStatus.SC_OK)
             && responseCode != HttpStatus.SC_NO_CONTENT
             && responseCode != HttpStatus.SC_NOT_MODIFIED;
@@ -166,7 +166,14 @@ public class HurlStack implements HttpStack {
      * Create an {@link HttpURLConnection} for the specified {@code url}.
      */
     protected HttpURLConnection createConnection(URL url) throws IOException {
-        return (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Workaround for the M release HttpURLConnection not observing the
+        // HttpURLConnection.setFollowRedirects() property.
+        // https://code.google.com/p/android/issues/detail?id=194495
+        connection.setInstanceFollowRedirects(HttpURLConnection.getFollowRedirects());
+
+        return connection;
     }
 
     /**

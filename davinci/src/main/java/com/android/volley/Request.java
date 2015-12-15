@@ -20,7 +20,9 @@ import android.net.TrafficStats;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
+
 import com.android.volley.VolleyLog.MarkerLog;
 
 import java.io.UnsupportedEncodingException;
@@ -67,17 +69,11 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /** URL of this request. */
     private final String mUrl;
 
-    /** The redirect url to use for 3xx http responses */
-    private String mRedirectUrl;
-
-    /** The unique identifier of the request */
-    private String mIdentifier;
-
     /** Default tag for {@link TrafficStats}. */
     private final int mDefaultTrafficStatsTag;
 
     /** Listener interface for errors. */
-    private Response.ErrorListener mErrorListener;
+    private final Response.ErrorListener mErrorListener;
 
     /** Sequence number of this request, used to enforce FIFO ordering. */
     private Integer mSequence;
@@ -113,7 +109,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * is provided by subclasses, who have a better idea of how to deliver an
      * already-parsed response.
      *
-     * @deprecated Use {@link #Request(int, String, com.android.volley.Response.ErrorListener)}.
+     * @deprecated Use {@link #Request(int, String, Response.ErrorListener)}.
      */
     @Deprecated
     public Request(String url, Response.ErrorListener listener) {
@@ -129,7 +125,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     public Request(int method, String url, Response.ErrorListener listener) {
         mMethod = method;
         mUrl = url;
-        mIdentifier = createIdentifier(method, url);
         mErrorListener = listener;
         setRetryPolicy(new DefaultRetryPolicy());
 
@@ -163,7 +158,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * @return this request's {@link com.android.volley.Response.ErrorListener}.
+     * @return this request's {@link Response.ErrorListener}.
      */
     public Response.ErrorListener getErrorListener() {
         return mErrorListener;
@@ -219,7 +214,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     void finish(final String tag) {
         if (mRequestQueue != null) {
             mRequestQueue.finish(this);
-            onFinish();
         }
         if (MarkerLog.ENABLED) {
             final long threadId = Thread.currentThread().getId();
@@ -240,13 +234,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
             mEventLog.add(tag, threadId);
             mEventLog.finish(this.toString());
         }
-    }
-
-    /**
-     * clear listeners when finished
-     */
-    protected void onFinish() {
-        mErrorListener = null;
     }
 
     /**
@@ -284,35 +271,14 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * Returns the URL of this request.
      */
     public String getUrl() {
-        return (mRedirectUrl != null) ? mRedirectUrl : mUrl;
-    }
-
-    /**
-     * Returns the URL of the request before any redirects have occurred.
-     */
-    public String getOriginUrl() {
-    	return mUrl;
-    }
-
-    /**
-     * Returns the identifier of the request.
-     */
-    public String getIdentifier() {
-        return mIdentifier;
-    }
-
-    /**
-     * Sets the redirect url to handle 3xx http responses.
-     */
-    public void setRedirectUrl(String redirectUrl) {
-    	mRedirectUrl = redirectUrl;
+        return mUrl;
     }
 
     /**
      * Returns the cache key for this request.  By default, this is the URL.
      */
     public String getCacheKey() {
-        return mMethod + ":" + mUrl;
+        return getUrl();
     }
 
     /**
@@ -620,17 +586,5 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         String trafficStatsTag = "0x" + Integer.toHexString(getTrafficStatsTag());
         return (mCanceled ? "[X] " : "[ ] ") + getUrl() + " " + trafficStatsTag + " "
                 + getPriority() + " " + mSequence;
-    }
-
-    private static long sCounter;
-    /**
-     *  sha1(Request:method:url:timestamp:counter)
-     * @param method http method
-     * @param url               http request url
-     * @return sha1 hash string
-     */
-    private static String createIdentifier(final int method, final String url) {
-        return InternalUtils.sha1Hash("Request:" + method + ":" + url +
-                ":" + System.currentTimeMillis() + ":" + (sCounter++));
     }
 }

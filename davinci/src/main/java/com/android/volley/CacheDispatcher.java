@@ -83,21 +83,11 @@ public class CacheDispatcher extends Thread {
         // Make a blocking call to initialize the cache.
         mCache.initialize();
 
-        Request<?> request;
         while (true) {
-            // release previous request object to avoid leaking request object when mQueue is drained.
-            request = null;
             try {
-                // Take a request from the queue.
-                request = mCacheQueue.take();
-            } catch (InterruptedException e) {
-                // We may have been interrupted because it was time to quit.
-                if (mQuit) {
-                    return;
-                }
-                continue;
-            }
-            try {
+                // Get a request from the cache triage queue, blocking until
+                // at least one is available.
+                final Request<?> request = mCacheQueue.take();
                 request.addMarker("cache-queue-take");
 
                 // If the request has been canceled, don't bother dispatching it.
@@ -144,20 +134,24 @@ public class CacheDispatcher extends Thread {
 
                     // Post the intermediate response back to the user and have
                     // the delivery then forward the request along to the network.
-                    final Request<?> finalRequest = request;
                     mDelivery.postResponse(request, response, new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                mNetworkQueue.put(finalRequest);
+                                mNetworkQueue.put(request);
                             } catch (InterruptedException e) {
                                 // Not much we can do about this.
                             }
                         }
                     });
                 }
-            } catch (Exception e) {
-                VolleyLog.e(e, "Unhandled exception %s", e.toString());
+
+            } catch (InterruptedException e) {
+                // We may have been interrupted because it was time to quit.
+                if (mQuit) {
+                    return;
+                }
+                continue;
             }
         }
     }

@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * A variation of {@link java.io.ByteArrayOutputStream} that uses a pool of byte[] buffers instead
+ * A variation of {@link ByteArrayOutputStream} that uses a pool of byte[] buffers instead
  * of always allocating them fresh, saving on heap churn.
  */
 public class PoolingByteArrayOutputStream extends ByteArrayOutputStream {

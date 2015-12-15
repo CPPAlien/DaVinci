@@ -11,7 +11,7 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.0.5'
+    compile 'com.github.CPPAlien:DaVinci:1.0.6'
 }
 ```
 

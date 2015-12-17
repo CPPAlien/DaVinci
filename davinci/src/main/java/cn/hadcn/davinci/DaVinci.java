@@ -90,6 +90,18 @@ public class DaVinci {
         }
     }
 
+    private int mMaxRetries = 0;
+    private int mTimeOut = 0;
+    /**
+     * set http configures globally
+     * @param maxRetires max retries, default is 1
+     * @param timeout timeout, default is 2500ms
+     */
+    public void setHttpGlobal(int maxRetires, int timeout) {
+        mMaxRetries = maxRetires;
+        mTimeOut = timeout;
+    }
+
     /**
      * different instances in different calls, and put them into a request queue
      * @return HttpRequest
@@ -112,7 +124,15 @@ public class DaVinci {
 
             cookieString = cookieBuilder.toString();
         }
-        return new HttpRequest( mRequestQueue, isEnableCookie, cookieString );
+
+        HttpRequest request = new HttpRequest( mRequestQueue, isEnableCookie, cookieString );
+        if ( mMaxRetries != 0 ) {
+            request.setMaxRetries(mMaxRetries);
+        }
+        if ( mTimeOut != 0) {
+            request.setTimeOut(mTimeOut);
+        }
+        return request;
     }
 
     public VinciImageLoader getImageLoader() {

@@ -36,11 +36,21 @@ public class HttpRequest {
         mCookie = cookie;
     }
 
-    public HttpRequest setTimesOut(int timesOutMs) {
-        mTimeOutMs = timesOutMs;
+    /**
+     * timeout millisecond, default is 2500 ms
+     * @param timeOutMs timeout
+     * @return this
+     */
+    public HttpRequest setTimeOut(int timeOutMs) {
+        mTimeOutMs = timeOutMs;
         return this;
     }
 
+    /**
+     * retry times, default is once
+     * @param maxRetries time of retrying
+     * @return this
+     */
     public HttpRequest setMaxRetries(int maxRetries) {
         mMaxRetries = maxRetries;
         return this;

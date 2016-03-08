@@ -100,6 +100,9 @@ public class VinciImageLoader {
 
         @Override
         protected Bitmap doInBackground(String... params) {
+            if ( mImageUrl == null ) {
+                return null;
+            }
             return mImageCache.getBitmap( mImageUrl );
         }
 

@@ -1,7 +1,5 @@
 package cn.hadcn.davinci.http.impl;
 
-import android.content.Context;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -29,6 +27,7 @@ public class HttpRequest {
     private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
     private boolean isEnableCookie = false;
     private String mCookie = null;
+    private OnDaVinciRequestListener mRequestListner = null;
 
     public HttpRequest( RequestQueue requestQueue, boolean enableCookie, String cookie) {
         mRequestQueue = requestQueue;
@@ -84,15 +83,29 @@ public class HttpRequest {
     }
 
     /**
-     * do http request
-     * @param urlMap get method parameters  map
-     * @param postJsonData post method parameters json format data
+     * post method
+     * @param requestUrl request url of post, must include http:// as head
+     * @param postBodyString post body part, String type
      * @param requestListener listener
      */
-    private void doRequest(RequestMethod.Way way, String url, Map<String, Object> urlMap, JSONObject postJsonData, final OnDaVinciRequestListener requestListener) {
-        int volleyWay;
+    public void doPost(String requestUrl, String postBodyString, OnDaVinciRequestListener requestListener) {
+        doRequest(RequestMethod.Way.POST,
+                requestUrl, null, postBodyString, requestListener);
+    }
+
+    /**
+     * do http request
+     * @param way GET or POST
+     * @param url request url
+     * @param urlMap get method parameters  map
+     * @param postBody post method parameters
+     * @param requestListener listener
+     */
+    private void doRequest(RequestMethod.Way way, String url, Map<String, Object> urlMap, Object postBody, final OnDaVinciRequestListener requestListener) {
+        mRequestListner = requestListener;
         String requestUrl = url;
 
+        //construct url
         if ( null != urlMap ){
             requestUrl += "?";
             VinciLog.i("url map = " + urlMap.toString());
@@ -103,58 +116,91 @@ public class HttpRequest {
             VinciLog.i("url map = null");
         }
 
+        JsonVinciRequest jsonObjectRequest = getRequest(way, requestUrl, postBody);
+
+        if ( isEnableCookie ) {
+            jsonObjectRequest.setCookie( mCookie );
+        }
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(mTimeOutMs, mMaxRetries, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        mRequestQueue.add(jsonObjectRequest);
+    }
+
+    private JsonVinciRequest getRequest(RequestMethod.Way way, String requestUrl, Object postBody) {
+        int volleyWay;
+
+        //get volley method code, get or post
         switch (way) {
             case GET:
                 volleyWay = Request.Method.GET;
                 break;
             default:
                 volleyWay = Request.Method.POST;
-                if ( null != postJsonData ){
-                    VinciLog.i("doPost data = " + postJsonData.toString());
+                if ( null != postBody ){
+                    VinciLog.i("doPost data = " + postBody.toString());
                 } else {
                     VinciLog.i("doPost map = null");
                 }
                 break;
         }
 
-        VinciLog.i("send request:" + requestUrl);
-        JsonVinciRequest jsonObjectRequest = new JsonVinciRequest(volleyWay, requestUrl, postJsonData,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        VinciLog.i("http response:" + (response == null ? null : response.toString()));
-                        if ( requestListener != null ) {
-                            requestListener.onDaVinciRequestSuccess(response);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
-                        VinciLog.e("http failed: " + reason);
-                        if ( requestListener != null ) {
-                            requestListener.onDaVinciRequestFailed(reason);
-                        }
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> mapHeaders = super.getHeaders();
-                if ( mHeadersMap != null ) {
-                    for ( String key : mHeadersMap.keySet() ) {
-                        mapHeaders.put(key, mHeadersMap.get(key));
-                    }
-                }
-                return mapHeaders;
-            }
-
-
-        };
-        if ( isEnableCookie ) {
-            jsonObjectRequest.setCookie( mCookie );
+        //inflate body part depends on type we get
+        JsonVinciRequest jsonObjectRequest = null;
+        if ( postBody instanceof JSONObject ) {
+            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (JSONObject)postBody,
+                    new ResponseListener(),
+                    new ErrorListener());
+        }else if (postBody instanceof String ) {
+            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (String)postBody,
+                    new ResponseListener(),
+                    new ErrorListener());
         }
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(mTimeOutMs, mMaxRetries, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        mRequestQueue.add(jsonObjectRequest);
+        return jsonObjectRequest;
+    }
+
+
+    private class ResponseListener implements Response.Listener<JSONObject> {
+
+        @Override
+        public void onResponse(JSONObject response) {
+            VinciLog.i("http response:" + (response == null ? null : response.toString()));
+            if ( mRequestListner != null ) {
+                mRequestListner.onDaVinciRequestSuccess(response);
+            }
+        }
+    }
+
+    private class ErrorListener implements Response.ErrorListener {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
+            VinciLog.e("http failed: " + reason);
+            if ( mRequestListner != null ) {
+                mRequestListner.onDaVinciRequestFailed(reason);
+            }
+        }
+    }
+
+    private class DaVinciRequest extends JsonVinciRequest{
+
+        public DaVinciRequest(int method, String url, String requestBody, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+            super(method, url, requestBody, listener, errorListener);
+        }
+
+        public DaVinciRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+            super(method, url, jsonRequest, listener, errorListener);
+        }
+
+        @Override
+        public Map<String, String> getHeaders() throws AuthFailureError {
+            Map<String, String> mapHeaders = super.getHeaders();
+            if (mHeadersMap != null) {
+                for (String key : mHeadersMap.keySet()) {
+                    mapHeaders.put(key, mHeadersMap.get(key));
+                }
+            }
+            VinciLog.d("header:" + mapHeaders.toString());
+            return mapHeaders;
+        }
     }
 }

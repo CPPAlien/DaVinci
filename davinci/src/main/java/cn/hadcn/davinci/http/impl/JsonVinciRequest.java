@@ -16,6 +16,7 @@
 
 package cn.hadcn.davinci.http.impl;
 
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -40,6 +41,7 @@ import cn.hadcn.davinci.base.VinciLog;
 public class JsonVinciRequest extends JsonRequest<JSONObject> {
     private Map<String, String> mHeadersMap = new HashMap<>();
 
+
     /**
      * Creates a new request.
      * @param method the HTTP method to use
@@ -53,27 +55,6 @@ public class JsonVinciRequest extends JsonRequest<JSONObject> {
                             Listener<JSONObject> listener, ErrorListener errorListener) {
         super(method, url, requestBody, listener,
                 errorListener);
-    }
-
-    /**
-     * Creates a new request.
-     * @param url URL to fetch the JSON from
-     * @param listener Listener to receive the JSON response
-     * @param errorListener Error listener, or null to ignore errors.
-     */
-    public JsonVinciRequest(String url, Listener<JSONObject> listener, ErrorListener errorListener) {
-        super(Method.GET, url, null, listener, errorListener);
-    }
-
-    /**
-     * Creates a new request.
-     * @param method the HTTP method to use
-     * @param url URL to fetch the JSON from
-     * @param listener Listener to receive the JSON response
-     * @param errorListener Error listener, or null to ignore errors.
-     */
-    public JsonVinciRequest(int method, String url, Listener<JSONObject> listener, ErrorListener errorListener) {
-        super(method, url, null, listener, errorListener);
     }
 
     /**

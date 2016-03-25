@@ -118,6 +118,11 @@ public class HttpRequest {
 
         JsonVinciRequest jsonObjectRequest = getRequest(way, requestUrl, postBody);
 
+        if ( jsonObjectRequest == null ){
+            VinciLog.e("post body type is error, it should be json or string");
+            return;
+        }
+
         if ( isEnableCookie ) {
             jsonObjectRequest.setCookie( mCookie );
         }
@@ -145,15 +150,20 @@ public class HttpRequest {
 
         //inflate body part depends on type we get
         JsonVinciRequest jsonObjectRequest = null;
-        if ( postBody instanceof JSONObject ) {
+        if ( postBody == null ) {
+            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (String)null,
+                    new ResponseListener(),
+                    new ErrorListener());
+        } else if ( postBody instanceof JSONObject ) {
             jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (JSONObject)postBody,
                     new ResponseListener(),
                     new ErrorListener());
-        }else if (postBody instanceof String ) {
+        } else if (postBody instanceof String ) {
             jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (String)postBody,
                     new ResponseListener(),
                     new ErrorListener());
         }
+
         return jsonObjectRequest;
     }
 

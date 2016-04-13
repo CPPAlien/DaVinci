@@ -1,6 +1,6 @@
 # DaVinci
-Full set of solutions to network data transmission; 
-The library is based on Volley, including image loading, memory/disk caching, http request, uploading file, and Cookies
+Full set solutions of network data transmission; 
+The library based on Volley, includes image loading, memory/disk caching, http request, file uploading, and Cookies
 
 ###1, How to Use
 
@@ -11,18 +11,22 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.0.6'
+    compile 'com.github.CPPAlien:DaVinci:1.0.7'
 }
 ```
 
 ####Release Notes
+##### 1.0.7
+1, You can reset your request Content-Type and charset of your request body now by using `request.contentType("xxxx")` and `request.charset("xxx")`
+2, Change some expressions of setting, like `addHeaders` to `headers`
+3, Get rid of v4 support lib dependency
 
-#####1.0.6
+##### 1.0.6
 Use CookieHandler to manage cookies, 
 
 Thanks for Fran Montiel who wrote the PersistentCookieStore(https://gist.github.com/franmontiel/ed12a2295566b7076161)
 
-#####1.0.5
+##### 1.0.5
 
 Add Cookies Management in http Request
 
@@ -32,7 +36,7 @@ you can just call DaVinci.with(Context).enableCookie(); method before each reque
 Tips: The Cookies management isn't identical as a browser's. It can only deal with one Set-Cookie header of
 a response, and will cover the old cookies. It's not like the browser can set cookies value by cookies' keys.
 
-#####1.0.4
+##### 1.0.4
 Add Uploader Function implemented by data-form
 
 ###2, Implement GET or POST request
@@ -83,16 +87,21 @@ DaVinci.with(Context).enableCookie();
 ```
 add http request headers
 ```
-getHttpRequest().addHeaders(Map<String, String> headersMap)
+getHttpRequest().headers(Map<String, String> headersMap)
 ```
 set http request timeout
 ```
-getHttpRequest().setTimesOut(int timesOutMs)
+getHttpRequest().timeOut(int timesOutMs)
 ```
 set http request max retry times
 ```
-getHttpRequest().setMaxRetries(int maxRetries)
+getHttpRequest().maxRetries(int maxRetries)
 ```
+set Content-Type(default is application/json) and charset(default is utf-8) of request, charset is optional
+```
+contentType(String contentType, String charset)
+```
+
 limit the max size of image loaded from internet
 ```
 getImageLoader().resize(int maxPix).load(...)

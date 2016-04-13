@@ -1,7 +1,6 @@
 package cn.hadcn.davinci.cache;
 
 import android.graphics.Bitmap;
-import android.support.v4.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader;
 

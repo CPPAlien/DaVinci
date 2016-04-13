@@ -3,7 +3,6 @@ package cn.hadcn.davinci.cache;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
@@ -111,7 +110,7 @@ public class VinciImageLoader {
             if ( bitmap != null ) {
                 mImageView.setImageBitmap(bitmap);
             } else if ( mImageUrl == null || !mImageUrl.contains("http")) {
-                mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mErrorImage));
+                mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             } else {
                 mImageLoader.get(mImageUrl, new VolleyImageListener(mImageView, mLoadingImage, mErrorImage));
             }
@@ -127,7 +126,7 @@ public class VinciImageLoader {
             mLoadingImage = loadingImage;
             mErrorImage = errorImage;
             this.mImageView = mImageView;
-            mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mLoadingImage));
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(mLoadingImage));
         }
 
         @Override
@@ -154,13 +153,13 @@ public class VinciImageLoader {
                 mImageCache.putBitmap(response.getRequestUrl(), bitmap);
                 mImageView.setImageBitmap(bitmap);
             } else {
-                mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mLoadingImage));
+                mImageView.setImageDrawable(mContext.getResources().getDrawable(mLoadingImage));
             }
         }
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            mImageView.setImageDrawable(ContextCompat.getDrawable(mContext, mErrorImage));
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         }
     }
 }

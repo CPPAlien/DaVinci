@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "cn.hadcn.davinci_example"
@@ -17,15 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-}
-
-repositories{
-    maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    //compile 'com.github.CPPAlien:DaVinci:1.0.5'
+    //compile 'com.github.CPPAlien:DaVinci:1.0.6'
     compile project(':davinci')
+    compile 'com.android.support:appcompat-v7:23.2.0'
 }

@@ -127,10 +127,10 @@ public class DaVinci {
 
         HttpRequest request = new HttpRequest( mRequestQueue, isEnableCookie, cookieString );
         if ( mMaxRetries != 0 ) {
-            request.setMaxRetries(mMaxRetries);
+            request.maxRetries(mMaxRetries);
         }
         if ( mTimeOut != 0) {
-            request.setTimeOut(mTimeOut);
+            request.timeOut(mTimeOut);
         }
         return request;
     }

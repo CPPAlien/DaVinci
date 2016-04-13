@@ -1,5 +1,5 @@
-.gradle
 /local.properties
+/.gradle
 /.idea
 .DS_Store
 /build
@@ -7,3 +7,5 @@
 /app/*.iml
 *.iml
 gradle.properties
+/davinci/*.iml
+/davinci/build

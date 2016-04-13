@@ -6,9 +6,8 @@ android {
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 22
-        versionCode 2015121501
-        versionName "1.0.6"
+        versionCode 2016041301
+        versionName "1.0.7"
     }
     buildTypes {
         release {
@@ -19,6 +18,5 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.1.0'
     compile files('libs/httpmime-4.1.3.jar')
 }

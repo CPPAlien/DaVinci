@@ -9,10 +9,12 @@ import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.base.RequestMethod;
+import cn.hadcn.davinci.base.VolleyRequestBase;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 
 
@@ -22,12 +24,14 @@ import cn.hadcn.davinci.http.OnDaVinciRequestListener;
  * */
 public class HttpRequest {
     private RequestQueue mRequestQueue;
-    private Map<String, String> mHeadersMap = null;
+    private Map<String, String> mHeadersMap = new HashMap<>();
+    private String mContentType = null;
+    private String mCharset = "utf-8";
     private int mTimeOutMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
     private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
     private boolean isEnableCookie = false;
     private String mCookie = null;
-    private OnDaVinciRequestListener mRequestListner = null;
+    private OnDaVinciRequestListener mRequestListener = null;
 
     public HttpRequest( RequestQueue requestQueue, boolean enableCookie, String cookie) {
         mRequestQueue = requestQueue;
@@ -40,7 +44,7 @@ public class HttpRequest {
      * @param timeOutMs timeout
      * @return this
      */
-    public HttpRequest setTimeOut(int timeOutMs) {
+    public HttpRequest timeOut(int timeOutMs) {
         mTimeOutMs = timeOutMs;
         return this;
     }
@@ -50,13 +54,40 @@ public class HttpRequest {
      * @param maxRetries time of retrying
      * @return this
      */
-    public HttpRequest setMaxRetries(int maxRetries) {
+    public HttpRequest maxRetries(int maxRetries) {
         mMaxRetries = maxRetries;
         return this;
     }
 
-    public HttpRequest addHeaders(Map<String, String> headersMap) {
+    /**
+     * add header in request
+     * @param headersMap header
+     * @return this
+     */
+    public HttpRequest headers(Map<String, String> headersMap) {
         mHeadersMap = headersMap;
+        return this;
+    }
+
+    /**
+     * set Content-Type field, default is application/json
+     * @param contentType content-type
+     * @return this
+     */
+    public HttpRequest contentType(String contentType) {
+        mContentType = contentType;
+        return this;
+    }
+
+    /**
+     * set Content-Type field, default is application/json
+     * @param contentType content-type
+     * @param charset charset of request body, default is utf-8
+     * @return this
+     */
+    public HttpRequest contentType(String contentType, String charset) {
+        mContentType = contentType;
+        mCharset = charset;
         return this;
     }
 
@@ -102,7 +133,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     private void doRequest(RequestMethod.Way way, String url, Map<String, Object> urlMap, Object postBody, final OnDaVinciRequestListener requestListener) {
-        mRequestListner = requestListener;
+        mRequestListener = requestListener;
         String requestUrl = url;
 
         //construct url
@@ -116,7 +147,7 @@ public class HttpRequest {
             VinciLog.i("url map = null");
         }
 
-        JsonVinciRequest jsonObjectRequest = getRequest(way, requestUrl, postBody);
+        DaVinciRequest jsonObjectRequest = getRequest(way, requestUrl, postBody);
 
         if ( jsonObjectRequest == null ){
             VinciLog.e("post body type is error, it should be json or string");
@@ -130,7 +161,7 @@ public class HttpRequest {
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    private JsonVinciRequest getRequest(RequestMethod.Way way, String requestUrl, Object postBody) {
+    private DaVinciRequest getRequest(RequestMethod.Way way, String requestUrl, Object postBody) {
         int volleyWay;
 
         //get volley method code, get or post
@@ -149,9 +180,9 @@ public class HttpRequest {
         }
 
         //inflate body part depends on type we get
-        JsonVinciRequest jsonObjectRequest = null;
+        DaVinciRequest jsonObjectRequest = null;
         if ( postBody == null ) {
-            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (String)null,
+            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl,
                     new ResponseListener(),
                     new ErrorListener());
         } else if ( postBody instanceof JSONObject ) {
@@ -173,8 +204,8 @@ public class HttpRequest {
         @Override
         public void onResponse(JSONObject response) {
             VinciLog.i("http response:" + (response == null ? null : response.toString()));
-            if ( mRequestListner != null ) {
-                mRequestListner.onDaVinciRequestSuccess(response);
+            if ( mRequestListener != null ) {
+                mRequestListener.onDaVinciRequestSuccess(response);
             }
         }
     }
@@ -185,32 +216,51 @@ public class HttpRequest {
         public void onErrorResponse(VolleyError error) {
             String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
             VinciLog.e("http failed: " + reason);
-            if ( mRequestListner != null ) {
-                mRequestListner.onDaVinciRequestFailed(reason);
+            if ( mRequestListener != null ) {
+                mRequestListener.onDaVinciRequestFailed(reason);
             }
         }
     }
 
-    private class DaVinciRequest extends JsonVinciRequest{
+    private class DaVinciRequest extends VolleyRequestBase {
+
+        /** Content type for request. */
+        private final String PROTOCOL_CONTENT_TYPE = "application/json";
 
         public DaVinciRequest(int method, String url, String requestBody, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
             super(method, url, requestBody, listener, errorListener);
         }
 
+        @Override
+        public String getBodyContentType() {
+            String contentType = PROTOCOL_CONTENT_TYPE;
+            if ( mContentType != null ) {
+                contentType = mContentType;
+            }
+            return String.format("%s; charset=%s", contentType, mCharset);
+        }
+
+        public DaVinciRequest(int method, String url, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+            super(method, url, null, listener, errorListener);
+        }
+
         public DaVinciRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-            super(method, url, jsonRequest, listener, errorListener);
+            super(method, url, jsonRequest.toString(), listener, errorListener);
         }
 
         @Override
         public Map<String, String> getHeaders() throws AuthFailureError {
-            Map<String, String> mapHeaders = super.getHeaders();
-            if (mHeadersMap != null) {
-                for (String key : mHeadersMap.keySet()) {
-                    mapHeaders.put(key, mHeadersMap.get(key));
-                }
-            }
-            VinciLog.d("header:" + mapHeaders.toString());
-            return mapHeaders;
+            VinciLog.d("Headers:" + mHeadersMap.toString());
+            return mHeadersMap;
+        }
+
+        /**
+         * set Cookie content
+         * @param cookie cookie content
+         */
+        public void setCookie( String cookie ) {
+            VinciLog.d("Put Cookie:" + cookie);
+            mHeadersMap.put("Cookie", cookie);
         }
     }
 }

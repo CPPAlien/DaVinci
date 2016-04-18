@@ -31,7 +31,7 @@ public class DaVinci {
 
     public static DaVinci with(Context context) {
         if ( mDaVinci == null ) {
-            mDaVinci = new DaVinci(context);
+            mDaVinci = new DaVinci(context.getApplicationContext());
         }
         return mDaVinci;
     }

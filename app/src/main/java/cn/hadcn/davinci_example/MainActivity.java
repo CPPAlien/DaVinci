@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
     @Override
     public void onDaVinciRequestSuccess(String jsonObject) {
-        Log.i("DaVinciTest", jsonObject.toString());
+        Log.i("DaVinciTest", toString());
     }
 
     @Override

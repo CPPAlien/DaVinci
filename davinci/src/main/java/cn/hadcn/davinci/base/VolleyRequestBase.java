@@ -26,28 +26,22 @@ import com.android.volley.Response.Listener;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * A request for retrieving a T type response body at a given URL that also
  * optionally sends along a JSON body in the request specified.
- *
- * @param <T> JSON type of response expected
  */
-public abstract class VolleyRequestBase<T> extends Request<JSONObject> {
+public abstract class VolleyRequestBase extends Request<String> {
     /** Default charset for JSON request. */
     protected static final String PROTOCOL_CHARSET = "utf-8";
 
-    private final Listener<JSONObject> mListener;
+    private final Listener<String> mListener;
     private final String mRequestBody;
 
 
-    public VolleyRequestBase(int method, String url, String requestBody, Listener<JSONObject> listener,
+    public VolleyRequestBase(int method, String url, String requestBody, Listener<String> listener,
                              ErrorListener errorListener) {
         super(method, url, errorListener);
         mListener = listener;
@@ -55,7 +49,7 @@ public abstract class VolleyRequestBase<T> extends Request<JSONObject> {
     }
 
     @Override
-    protected void deliverResponse(JSONObject response) {
+    protected void deliverResponse(String response) {
         mListener.onResponse(response);
     }
 
@@ -90,17 +84,15 @@ public abstract class VolleyRequestBase<T> extends Request<JSONObject> {
     }
 
     @Override
-    protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+    protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try {
             String jsonString = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
 
-            return Response.success(new JSONObject(jsonString),
+            return Response.success(jsonString,
                     HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
         }
     }
 

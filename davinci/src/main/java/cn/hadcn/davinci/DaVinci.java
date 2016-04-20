@@ -24,16 +24,16 @@ import cn.hadcn.davinci.upload.impl.VinciUpload;
 public class DaVinci {
     private static RequestQueue mRequestQueue;
     private static VinciImageLoader mDaImageLoader;
-    private static DaVinci mDaVinci = null;
+    private static DaVinci sDaVinci = null;
     private boolean isEnableCookie = false;
     private CookieManager mCookieManager = null;
     private Context mContext = null;
 
     public static DaVinci with(Context context) {
-        if ( mDaVinci == null ) {
-            mDaVinci = new DaVinci(context.getApplicationContext());
+        if ( sDaVinci == null ) {
+            sDaVinci = new DaVinci(context.getApplicationContext());
         }
-        return mDaVinci;
+        return sDaVinci;
     }
 
     /**
@@ -41,10 +41,10 @@ public class DaVinci {
      * @return DaVinci instance
      */
     public static DaVinci with() {
-        if ( mDaVinci == null ) {
+        if ( sDaVinci == null ) {
             VinciLog.e("DaVinci instance has not been initialized yet, please use DaVinci.init() first");
         }
-        return mDaVinci;
+        return sDaVinci;
     }
 
     /**
@@ -55,7 +55,7 @@ public class DaVinci {
      * @param context context
      */
     public static void init(Context context){
-        mDaVinci = new DaVinci(context);
+        sDaVinci = new DaVinci(context);
     }
 
     /**

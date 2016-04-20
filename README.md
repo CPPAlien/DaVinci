@@ -11,11 +11,14 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.0.7'
+    compile 'com.github.CPPAlien:DaVinci:1.0.8'
 }
 ```
 
-####Release Notes
+#### Release Notes
+##### 1.0.8
+1, Change response format from jsonObject to String
+
 ##### 1.0.7
 1, You can reset your request Content-Type and charset of your request body now by using `request.contentType("xxxx")` and `request.charset("xxx")`
 2, Change some expressions of setting, like `addHeaders` to `headers`
@@ -106,6 +109,11 @@ limit the max size of image loaded from internet
 ```
 getImageLoader().resize(int maxPix).load(...)
 ```
+
+### TODO
+1, Use PtLog for log printing
+2, Change aar to jar
+3, Add json parse of response
 
 Thanks for DiskLruCache which powered by Jake Wharton.
 

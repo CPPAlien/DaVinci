@@ -199,11 +199,11 @@ public class HttpRequest {
     }
 
 
-    private class ResponseListener implements Response.Listener<JSONObject> {
+    private class ResponseListener implements Response.Listener<String> {
 
         @Override
-        public void onResponse(JSONObject response) {
-            VinciLog.i("http response:" + (response == null ? null : response.toString()));
+        public void onResponse(String response) {
+            VinciLog.i("http response:" + response);
             if ( mRequestListener != null ) {
                 mRequestListener.onDaVinciRequestSuccess(response);
             }
@@ -227,7 +227,7 @@ public class HttpRequest {
         /** Content type for request. */
         private final String PROTOCOL_CONTENT_TYPE = "application/json";
 
-        public DaVinciRequest(int method, String url, String requestBody, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        public DaVinciRequest(int method, String url, String requestBody, Response.Listener<String> listener, Response.ErrorListener errorListener) {
             super(method, url, requestBody, listener, errorListener);
         }
 
@@ -240,11 +240,11 @@ public class HttpRequest {
             return String.format("%s; charset=%s", contentType, mCharset);
         }
 
-        public DaVinciRequest(int method, String url, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        public DaVinciRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
             super(method, url, null, listener, errorListener);
         }
 
-        public DaVinciRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+        public DaVinciRequest(int method, String url, JSONObject jsonRequest, Response.Listener<String> listener, Response.ErrorListener errorListener) {
             super(method, url, jsonRequest.toString(), listener, errorListener);
         }
 

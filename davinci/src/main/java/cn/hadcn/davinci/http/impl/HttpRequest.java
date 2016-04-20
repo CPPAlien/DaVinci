@@ -139,7 +139,6 @@ public class HttpRequest {
         //construct url
         if ( null != urlMap ){
             requestUrl += "?";
-            VinciLog.i("url map = " + urlMap.toString());
             for ( String key : urlMap.keySet() ) {
                 requestUrl = requestUrl + key + "=" + urlMap.get(key) + "&";
             }
@@ -147,6 +146,7 @@ public class HttpRequest {
             VinciLog.i("url map = null");
         }
 
+        VinciLog.i("Request " + requestUrl);
         DaVinciRequest jsonObjectRequest = getRequest(way, requestUrl, postBody);
 
         if ( jsonObjectRequest == null ){

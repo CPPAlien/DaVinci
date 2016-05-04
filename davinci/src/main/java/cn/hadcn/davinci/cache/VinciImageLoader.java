@@ -2,16 +2,22 @@ package cn.hadcn.davinci.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.R;
+import cn.hadcn.davinci.base.ImageLoader;
+import cn.hadcn.davinci.base.VinciLog;
+import pl.droidsonroids.gif.GifDrawable;
 
 
 /**
@@ -32,6 +38,7 @@ public class VinciImageLoader {
         mContext = context;
         mImageCache= new DiskLruImageCache(mCacheDir,
                 1024 * 1024 * 20, Bitmap.CompressFormat.PNG, 30);
+
         mImageLoader = new ImageLoader(requestQueue, mImageCache);
     }
 
@@ -45,7 +52,7 @@ public class VinciImageLoader {
         return mCacheDir + File.separator + Util.generateKey(fileName) + ".0";
     }
 
-    public Bitmap getBitmap(String name) {
+    public ByteBuffer getBitmap(String name) {
         try {
             return mImageCache.getBitmap(name);
         } catch (NullPointerException e) {
@@ -53,7 +60,7 @@ public class VinciImageLoader {
         }
     }
 
-    public void putBitmap(String name, Bitmap bitmap) {
+    public void putBitmap(String name, ByteBuffer bitmap) {
         try {
             mImageCache.putBitmap(name, bitmap);
         } catch (NullPointerException e) {
@@ -79,7 +86,7 @@ public class VinciImageLoader {
         return this;
     }
 
-    private class ReadBitmapTask extends AsyncTask<String, Integer, Bitmap> {
+    private class ReadBitmapTask extends AsyncTask<String, Integer, ByteBuffer> {
         private ImageView mImageView;
         private String mImageUrl;
         private int mLoadingImage = DEFAULT_IMAGE_LOADING;
@@ -98,7 +105,7 @@ public class VinciImageLoader {
         }
 
         @Override
-        protected Bitmap doInBackground(String... params) {
+        protected ByteBuffer doInBackground(String... params) {
             if ( mImageUrl == null ) {
                 return null;
             }
@@ -106,9 +113,15 @@ public class VinciImageLoader {
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if ( bitmap != null ) {
-                mImageView.setImageBitmap(bitmap);
+        protected void onPostExecute(ByteBuffer byteBuffer) {
+            if ( byteBuffer != null ) {
+                byte[] bytes = byteBuffer.array();
+
+                // if it's gif, show as gif
+                if ( doGif(mImageView, bytes) ) return;
+
+                Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                mImageView.setImageBitmap(image);
             } else if ( mImageUrl == null || !mImageUrl.contains("http")) {
                 mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             } else {
@@ -131,8 +144,14 @@ public class VinciImageLoader {
 
         @Override
         public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-            Bitmap bitmap = response.getBitmap();
-            if ( null != bitmap ) {
+            ByteBuffer byteBuffer = response.getBitmap();
+            if ( null != byteBuffer ) {
+                byte[] bytes = byteBuffer.array();
+                // if it's gif, show as gif
+                if ( doGif(mImageView, bytes) ) return;
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
                 int bHeight = bitmap.getHeight();
                 int bWidth = bitmap.getWidth();
                 int scaleWidth = 0;
@@ -149,9 +168,13 @@ public class VinciImageLoader {
                         bitmap = Bitmap.createScaledBitmap(bitmap, scaleWidth, scaleHeight, false);
                     }
                 }
-
-                mImageCache.putBitmap(response.getRequestUrl(), bitmap);
                 mImageView.setImageBitmap(bitmap);
+
+                //cache image
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                mImageCache.putBitmap(response.getRequestUrl(), ByteBuffer.wrap(byteArray));
             } else {
                 mImageView.setImageDrawable(mContext.getResources().getDrawable(mLoadingImage));
             }
@@ -161,5 +184,19 @@ public class VinciImageLoader {
         public void onErrorResponse(VolleyError error) {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         }
+    }
+
+    private boolean doGif(ImageView imageView, byte[] data) {
+        if ( data[0] == 'G' && data[1] == 'I' && data[2] == 'F') {
+            try {
+                GifDrawable gifDrawable = new GifDrawable(data);
+                imageView.setImageDrawable(gifDrawable);
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                VinciLog.e("Gif constructs failed", e);
+            }
+        }
+        return false;
     }
 }

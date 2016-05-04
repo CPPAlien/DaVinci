@@ -20,7 +20,6 @@ android {
 }
 
 dependencies {
-    //compile 'com.github.CPPAlien:DaVinci:1.0.6'
     compile project(':davinci')
     compile 'com.android.support:appcompat-v7:23.2.0'
 }

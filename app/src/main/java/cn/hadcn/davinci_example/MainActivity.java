@@ -25,13 +25,16 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         Map<String, Object> map = new HashMap<>();
         map.put("q", "Beijing,cn");
         map.put("appid", "2de143494c0b295cca9337e1e96b00e0");
-        DaVinci.with(this).enableDebug("DaVinciTest");
+        DaVinci.init(true, "DaVinciTest", this);
         DaVinci.with(this).enableCookie();
         DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
 
-        ImageView imageView = (ImageView)findViewById(R.id.image_view);
-        DaVinci.with(this).getImageLoader().load(imageView, "http://img.ugirls.com/uploads/cooperate/baidu/20160408jzx3.jpg");
-        imageView.setOnClickListener(new View.OnClickListener() {
+        ImageView image1 = (ImageView)findViewById(R.id.image1);
+        ImageView image2 = (ImageView)findViewById(R.id.image2);
+        DaVinci.with(this).getImageLoader().load(image1, "http://img.ugirls.com/uploads/cooperate/baidu/20160408jzx3.jpg");
+        DaVinci.with(this).getImageLoader().load(image2, "http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif");
+
+        image2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DaVinci.with(MainActivity.this).getHttpRequest().doGet("http://www.baidu.com/", null, null);
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
     @Override
     public void onDaVinciRequestFailed(String errorInfo) {
-        Log.e("DaVinciTest", "failed = " + errorInfo);
+
     }
 
     @Override
@@ -59,6 +62,6 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
     @Override
     public void onDaVinciUploadFailed(String reason) {
-        Log.e("DaVinciTest", " upload failed reason = " + reason);
+
     }
 }

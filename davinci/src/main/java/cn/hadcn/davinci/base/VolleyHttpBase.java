@@ -33,7 +33,7 @@ import java.util.Map;
  * A request for retrieving a T type response body at a given URL that also
  * optionally sends along a JSON body in the request specified.
  */
-public abstract class VolleyRequestBase extends Request<String> {
+public abstract class VolleyHttpBase extends Request<String> {
     /** Default charset for JSON request. */
     protected static final String PROTOCOL_CHARSET = "utf-8";
 
@@ -41,8 +41,8 @@ public abstract class VolleyRequestBase extends Request<String> {
     private final String mRequestBody;
 
 
-    public VolleyRequestBase(int method, String url, String requestBody, Listener<String> listener,
-                             ErrorListener errorListener) {
+    public VolleyHttpBase(int method, String url, String requestBody, Listener<String> listener,
+                          ErrorListener errorListener) {
         super(method, url, errorListener);
         mListener = listener;
         mRequestBody = requestBody;

@@ -52,10 +52,13 @@ public class DaVinci {
      * advantages
      * 1, you do not use pass context in request any more;
      * 2, application context is special in whole application life, so DaVinci do not need hook activity, optimize the memory management;
+     * @param isEnableDebug is log printed
+     * @param debugTag log tag
      * @param context context
      */
-    public static void init(Context context){
+    public static void init(boolean isEnableDebug, String debugTag, Context context){
         sDaVinci = new DaVinci(context);
+        VinciLog.init(isEnableDebug, debugTag, context);
     }
 
     /**
@@ -67,15 +70,6 @@ public class DaVinci {
         mContext = context;
         mRequestQueue = Volley.newRequestQueue(context);
         mDaImageLoader = new VinciImageLoader(context, mRequestQueue);
-    }
-
-    /**
-     * enable Log printed in Logcat
-     * @param tag tag of log
-     */
-    public void enableDebug(String tag) {
-        VinciLog.enableLog = true;
-        VinciLog.LOG_TAG = tag;
     }
 
     /**

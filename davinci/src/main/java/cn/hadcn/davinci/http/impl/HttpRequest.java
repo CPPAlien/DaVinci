@@ -9,12 +9,13 @@ import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.base.RequestMethod;
-import cn.hadcn.davinci.base.VolleyRequestBase;
+import cn.hadcn.davinci.base.VolleyHttpBase;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 
 
@@ -147,7 +148,7 @@ public class HttpRequest {
         }
 
         VinciLog.i("Request " + requestUrl);
-        DaVinciRequest jsonObjectRequest = getRequest(way, requestUrl, postBody);
+        DaVinciHttp jsonObjectRequest = getRequest(way, requestUrl, postBody);
 
         if ( jsonObjectRequest == null ){
             VinciLog.e("post body type is error, it should be json or string");
@@ -161,7 +162,7 @@ public class HttpRequest {
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    private DaVinciRequest getRequest(RequestMethod.Way way, String requestUrl, Object postBody) {
+    private DaVinciHttp getRequest(RequestMethod.Way way, String requestUrl, Object postBody) {
         int volleyWay;
 
         //get volley method code, get or post
@@ -180,17 +181,17 @@ public class HttpRequest {
         }
 
         //inflate body part depends on type we get
-        DaVinciRequest jsonObjectRequest = null;
+        DaVinciHttp jsonObjectRequest = null;
         if ( postBody == null ) {
-            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl,
+            jsonObjectRequest = new DaVinciHttp(volleyWay, requestUrl,
                     new ResponseListener(),
                     new ErrorListener());
         } else if ( postBody instanceof JSONObject ) {
-            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (JSONObject)postBody,
+            jsonObjectRequest = new DaVinciHttp(volleyWay, requestUrl, (JSONObject)postBody,
                     new ResponseListener(),
                     new ErrorListener());
         } else if (postBody instanceof String ) {
-            jsonObjectRequest = new DaVinciRequest(volleyWay, requestUrl, (String)postBody,
+            jsonObjectRequest = new DaVinciHttp(volleyWay, requestUrl, (String)postBody,
                     new ResponseListener(),
                     new ErrorListener());
         }
@@ -214,7 +215,12 @@ public class HttpRequest {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
+            String reason = null;
+            if ( error.networkResponse != null ) {
+                reason = "status code : " + String.valueOf(error.networkResponse.statusCode) + ";";
+                byte[] data = error.networkResponse.data;
+                reason += ( data == null ? null : new String(data) );
+            }
             VinciLog.e("http failed: " + reason);
             if ( mRequestListener != null ) {
                 mRequestListener.onDaVinciRequestFailed(reason);
@@ -222,12 +228,12 @@ public class HttpRequest {
         }
     }
 
-    private class DaVinciRequest extends VolleyRequestBase {
+    private class DaVinciHttp extends VolleyHttpBase {
 
         /** Content type for request. */
         private final String PROTOCOL_CONTENT_TYPE = "application/json";
 
-        public DaVinciRequest(int method, String url, String requestBody, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+        public DaVinciHttp(int method, String url, String requestBody, Response.Listener<String> listener, Response.ErrorListener errorListener) {
             super(method, url, requestBody, listener, errorListener);
         }
 
@@ -240,11 +246,11 @@ public class HttpRequest {
             return String.format("%s; charset=%s", contentType, mCharset);
         }
 
-        public DaVinciRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+        public DaVinciHttp(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
             super(method, url, null, listener, errorListener);
         }
 
-        public DaVinciRequest(int method, String url, JSONObject jsonRequest, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+        public DaVinciHttp(int method, String url, JSONObject jsonRequest, Response.Listener<String> listener, Response.ErrorListener errorListener) {
             super(method, url, jsonRequest.toString(), listener, errorListener);
         }
 

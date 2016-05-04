@@ -1,9 +1,8 @@
 package cn.hadcn.davinci.cache;
 
-import android.graphics.Bitmap;
+import java.nio.ByteBuffer;
 
-import com.android.volley.toolbox.ImageLoader;
-
+import cn.hadcn.davinci.base.ImageLoader;
 import cn.hadcn.davinci.base.VinciLog;
 
 
@@ -11,25 +10,25 @@ import cn.hadcn.davinci.base.VinciLog;
  * based on LruCache
  * @author 90Chris
  */
-public class BitmapLruImageCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
+public class BitmapLruImageCache extends LruCache<String, ByteBuffer> implements ImageLoader.ImageCache {
 	
 	public BitmapLruImageCache(int maxSize) {
 		super(maxSize);
 	}
 	
 	@Override
-	protected int sizeOf(String key, Bitmap value) {
-		return value.getRowBytes() * value.getHeight();
+	protected int sizeOf(String key, ByteBuffer value) {
+		return value.capacity();
 	}
 	
 	@Override
-	public Bitmap getBitmap(String url) {
+	public ByteBuffer getBitmap(String url) {
 		VinciLog.d(url + " Retrieved item from Mem Cache");
 		return get(url);
 	}
 
 	@Override
-	public void putBitmap(String url, Bitmap bitmap) {
+	public void putBitmap(String url, ByteBuffer bitmap) {
 		VinciLog.d(url + " Added item to Mem Cache");
 		put(url, bitmap);
 	}

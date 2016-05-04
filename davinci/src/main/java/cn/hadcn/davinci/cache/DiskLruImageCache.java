@@ -1,10 +1,8 @@
 package cn.hadcn.davinci.cache;
 
-import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 
-import com.android.volley.toolbox.ImageLoader.ImageCache;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -12,7 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
+import cn.hadcn.davinci.base.ImageLoader;
 import cn.hadcn.davinci.base.VinciLog;
 
 
@@ -20,7 +20,7 @@ import cn.hadcn.davinci.base.VinciLog;
  * Implementation of DiskLruCache by Jake Wharton
  * modified by 90Chris
  */
-public class DiskLruImageCache implements ImageCache {
+public class DiskLruImageCache implements ImageLoader.ImageCache {
     private DiskLruCache mDiskCache;
     private BitmapLruImageCache mMemoryCache;
     private CompressFormat mCompressFormat = CompressFormat.JPEG;
@@ -42,11 +42,11 @@ public class DiskLruImageCache implements ImageCache {
             }
     }
 
-    private boolean writeBitmapToFile(Bitmap bitmap, DiskLruCache.Editor editor ) throws IOException {
+    private void writeBitmapToFile(ByteBuffer bitmap, DiskLruCache.Editor editor ) throws IOException {
         OutputStream out = null;
         try {
-            out = new BufferedOutputStream( editor.newOutputStream( 0 ), IO_BUFFER_SIZE );
-            return bitmap.compress( mCompressFormat, mCompressQuality, out );
+            out = new BufferedOutputStream( editor.newOutputStream(0), IO_BUFFER_SIZE );
+            out.write(bitmap.array());
         } finally {
             if ( out != null ) {
                 out.close();
@@ -55,7 +55,7 @@ public class DiskLruImageCache implements ImageCache {
     }
 
     @Override
-    public void putBitmap( String name, Bitmap data ) {
+    public void putBitmap( String name, ByteBuffer data ) {
         String key = Util.generateKey(name);
         mMemoryCache.putBitmap(key, data);
         DiskLruCache.Editor editor = null;
@@ -64,15 +64,10 @@ public class DiskLruImageCache implements ImageCache {
             if ( editor == null ) {
                 return;
             }
-
-            if( writeBitmapToFile( data, editor ) ) {               
-                mDiskCache.flush();
-                editor.commit();
-                VinciLog.d("image put on disk cache " + key);
-            } else {
-                editor.abort();
-                VinciLog.d("ERROR on: image put on disk cache " + key);
-            }   
+            writeBitmapToFile( data, editor);
+            mDiskCache.flush();
+            editor.commit();
+            VinciLog.i("Image saved on disk, cacheKey = " + key);
         } catch (IOException e) {
             VinciLog.d("ERROR on: image put on disk cache " + key);
             try {
@@ -85,9 +80,9 @@ public class DiskLruImageCache implements ImageCache {
     }
 
     @Override
-    public Bitmap getBitmap( String name ) {
+    public ByteBuffer getBitmap(String name) {
         String key = Util.generateKey(name);
-        Bitmap bitmap = mMemoryCache.getBitmap(key);
+        ByteBuffer bitmap = mMemoryCache.getBitmap(key);
         if ( bitmap != null ) {
             return bitmap;
         }
@@ -98,10 +93,13 @@ public class DiskLruImageCache implements ImageCache {
             if ( snapshot == null ) {
                 return null;
             }
-            final InputStream in = snapshot.getInputStream( 0 );
+            final InputStream in = snapshot.getInputStream(0);
             if ( in != null ) {
-                final BufferedInputStream buffIn = new BufferedInputStream( in, IO_BUFFER_SIZE );
-                bitmap = BitmapFactory.decodeStream(buffIn);
+                final BufferedInputStream buffIn = new BufferedInputStream(in, IO_BUFFER_SIZE);
+                int size = buffIn.available();
+                byte[] bytes = new byte[size];
+                if ( buffIn.read(bytes) == -1) return null;
+                bitmap = ByteBuffer.wrap(bytes);
                 mMemoryCache.putBitmap(key, bitmap);
             }
         } catch ( IOException e ) {
@@ -111,14 +109,11 @@ public class DiskLruImageCache implements ImageCache {
                 snapshot.close();
             }
         }
-        VinciLog.d(bitmap == null ? "bitmap is null" : "image read from disk " + key);
 
         return bitmap;
     }
 
-
     public void clearCache() {
-        VinciLog.d("disk cache CLEARED");
         try {
             mDiskCache.delete();
         } catch ( IOException e ) {

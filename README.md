@@ -1,6 +1,6 @@
 # DaVinci
 Full set solutions of network data transmission; 
-The library based on Volley, includes image loading, memory/disk caching, http request, file uploading, and Cookies
+The library based on Volley, includes image/gif loading, caching, http request with cookies and so on.
 
 ###1, How to Use
 
@@ -11,13 +11,19 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.0.8'
+    compile 'com.github.CPPAlien:DaVinci:1.0.9'
 }
 ```
 
 #### Release Notes
+
+##### 1.0.9
+1, Add Gif support
+Enable Gif, you should add `compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'` in your gradle,
+If not, downloaded gif will be changed into a normal pic.
+
 ##### 1.0.8
-1, Change response format from jsonObject to String
+1, Change response format from JsonObject to String
 
 ##### 1.0.7
 1, You can reset your request Content-Type and charset of your request body now by using `request.contentType("xxxx")` and `request.charset("xxx")`
@@ -47,10 +53,11 @@ Add Uploader Function implemented by data-form
 DaVinci.with(Context).getHttpRequest()
 doGet(String requestUrl, Map<String, Object> params, OnDaVinciRequestListener requestListener)
 doPost(String requestUrl, JSONObject postJsonData, OnDaVinciRequestListener requestListener)
+doPost(String requestUrl, String postBodyString, OnDaVinciRequestListener requestListener)
 
 public interface OnDaVinciRequestListener {
-    void onDaVinciRequestSucceed(JSONObject jsonObject);
-    void onDaVinciRequestFailed(String errorInfo);
+    void onDaVinciRequestSuccess(String response);
+    void onDaVinciRequestFailed(String reason);
 }
 ```
 
@@ -71,19 +78,18 @@ public interface OnDaVinciUploadListener {
 
 
 #Other
-###1, If you don't want to pass Context in each calling
+###1, If you don't want to pass Context every time
 
-You can use
+You can use init before each request, it's better put it in OnCreate method of Application
 ```
-DaVinci.init(Context);
+/**
+ * @param isEnableDebug if open log print
+ * @param debugTag log tag
+ * @param context context
+ */
+DaVinci.init(boolean isEnableDebug, String debugTag, Context context)
 ```
-before each calling, usually you can put it in Application's onCreate method.
 
-###2, Other settings
-enable Debuging, tag is printed tag in LogCat.
-```
-DaVinci.with(Context).enableDebug(String tag);
-```
 enable Cookies
 ```
 DaVinci.with(Context).enableCookie();

@@ -192,9 +192,8 @@ public class VinciImageLoader {
                 GifDrawable gifDrawable = new GifDrawable(data);
                 imageView.setImageDrawable(gifDrawable);
                 return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                VinciLog.e("Gif constructs failed", e);
+            } catch (Throwable e) {
+                VinciLog.d("pl.droidsonroids.gif.GifDrawable not found");
             }
         }
         return false;

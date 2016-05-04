@@ -19,7 +19,8 @@ dependencies {
 
 ##### 1.0.9
 1, Add Gif support
-Enable Gif, you should add `compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'` in your gradle,
+
+To enable Gif, you should add `compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'` in your gradle,
 If not, downloaded gif will be changed into a normal pic.
 
 ##### 1.0.8
@@ -116,10 +117,6 @@ limit the max size of image loaded from internet
 getImageLoader().resize(int maxPix).load(...)
 ```
 
-### TODO
-1, Use PtLog for log printing
-2, Change aar to jar
-3, Add json parse of response
 
 Thanks for DiskLruCache which powered by Jake Wharton.
 

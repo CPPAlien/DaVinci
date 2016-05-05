@@ -37,7 +37,7 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
 
     @Override
     protected ByteBuffer doInBackground(String... params) {
-        if ( mImageUrl == null ) {
+        if ( mImageUrl == null || mImageUrl.isEmpty() || !mImageUrl.startsWith("http") ) {
             return null;
         }
         return mImageCache.getBitmap(mImageUrl);
@@ -53,8 +53,6 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
 
             Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             mImageView.setImageBitmap(image);
-        } else if ( mImageUrl == null || !mImageUrl.contains("http")) {
-            mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         } else {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);

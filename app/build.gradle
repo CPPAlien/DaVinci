@@ -26,8 +26,7 @@ repositories {
 }
 
 dependencies {
-    //compile project(':davinci')
+    compile project(':davinci')
     compile 'com.android.support:appcompat-v7:23.2.0'
-    compile(name: 'davinci-release', ext:'aar')
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
 }

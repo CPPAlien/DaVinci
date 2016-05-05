@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
         ImageView image1 = (ImageView)findViewById(R.id.image1);
         ImageView image2 = (ImageView)findViewById(R.id.image2);
-        DaVinci.with(this).getImageLoader().load(image1, "http://img.ugirls.com/uploads/cooperate/baidu/20160408jzx3.jpg");
-        DaVinci.with(this).getImageLoader().load(image2, "http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif");
+        DaVinci.with(this).getImageLoader().load( "http://img.ugirls.com/uploads/cooperate/baidu/20160408jzx3.jpg").resize(400).into(image1);
+        DaVinci.with(this).getImageLoader().load("http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif").into(image2);
 
         image2.setOnClickListener(new View.OnClickListener() {
             @Override

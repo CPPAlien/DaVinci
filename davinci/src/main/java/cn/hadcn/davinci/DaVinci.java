@@ -11,7 +11,7 @@ import java.net.CookiePolicy;
 import java.net.HttpCookie;
 
 import cn.hadcn.davinci.base.VinciLog;
-import cn.hadcn.davinci.cache.VinciImageLoader;
+import cn.hadcn.davinci.image.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
 import cn.hadcn.davinci.http.impl.PersistentCookieStore;
 import cn.hadcn.davinci.upload.impl.VinciUpload;

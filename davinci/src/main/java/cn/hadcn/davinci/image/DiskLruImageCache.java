@@ -1,8 +1,4 @@
-package cn.hadcn.davinci.cache;
-
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-
+package cn.hadcn.davinci.image;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -22,21 +18,16 @@ import cn.hadcn.davinci.base.VinciLog;
  */
 public class DiskLruImageCache implements ImageLoader.ImageCache {
     private DiskLruCache mDiskCache;
-    private BitmapLruImageCache mMemoryCache;
-    private CompressFormat mCompressFormat = CompressFormat.JPEG;
+    private LruImageCache mMemoryCache;
     private static int IO_BUFFER_SIZE = 8 * 1024;
-    private int mCompressQuality = 70;
     private static final int APP_VERSION = 1;
     private static final int VALUE_COUNT = 1;
 
-    public DiskLruImageCache( String cachePath, int diskCacheSize,
-                             CompressFormat compressFormat, int quality) {
+    public DiskLruImageCache( String cachePath, int diskCacheSize ) {
         try {
-                final File diskCacheDir = new File(cachePath);;
-                mMemoryCache = new BitmapLruImageCache(diskCacheSize);
+                final File diskCacheDir = new File(cachePath);
+                mMemoryCache = new LruImageCache(diskCacheSize);
                 mDiskCache = DiskLruCache.open( diskCacheDir, APP_VERSION, VALUE_COUNT, diskCacheSize );
-                mCompressFormat = compressFormat;
-                mCompressQuality = quality;
             } catch (IOException e) {
                 e.printStackTrace();
             }

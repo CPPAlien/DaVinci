@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.hadcn.davinci.cache;
+package cn.hadcn.davinci.image;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;

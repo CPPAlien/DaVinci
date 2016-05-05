@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.hadcn.davinci.cache;
+package cn.hadcn.davinci.image;
 import java.util.LinkedHashMap;
 import java.util.Map;
 // STOPSHIP replace "Honeycomb MR1" with numbered release 2x below

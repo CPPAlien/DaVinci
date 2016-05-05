@@ -1,18 +1,17 @@
-package cn.hadcn.davinci.cache;
+package cn.hadcn.davinci.image;
 
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.base.ImageLoader;
-import cn.hadcn.davinci.base.VinciLog;
 
 
 /**
  * based on LruCache
  * @author 90Chris
  */
-public class BitmapLruImageCache extends LruCache<String, ByteBuffer> implements ImageLoader.ImageCache {
+public class LruImageCache extends LruCache<String, ByteBuffer> implements ImageLoader.ImageCache {
 	
-	public BitmapLruImageCache(int maxSize) {
+	public LruImageCache(int maxSize) {
 		super(maxSize);
 	}
 	
@@ -23,13 +22,11 @@ public class BitmapLruImageCache extends LruCache<String, ByteBuffer> implements
 	
 	@Override
 	public ByteBuffer getBitmap(String url) {
-		VinciLog.d(url + " Retrieved item from Mem Cache");
 		return get(url);
 	}
 
 	@Override
 	public void putBitmap(String url, ByteBuffer bitmap) {
-		VinciLog.d(url + " Added item to Mem Cache");
 		put(url, bitmap);
 	}
 }

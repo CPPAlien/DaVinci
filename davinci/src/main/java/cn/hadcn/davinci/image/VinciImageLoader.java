@@ -65,6 +65,14 @@ public class VinciImageLoader {
         return this;
     }
 
+    public VinciImageLoader load(int drawableId) {
+        return this;
+    }
+
+    public VinciImageLoader load(InputStream stream) {
+        return this;
+    }
+
     public void into(ImageView imageView) {
         mReadImageTask.setView(imageView);
         mReadImageTask.setSize(mMaxSize);

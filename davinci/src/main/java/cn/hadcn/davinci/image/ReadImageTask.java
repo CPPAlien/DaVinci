@@ -53,6 +53,8 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
 
             Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             mImageView.setImageBitmap(image);
+        } else if ( mImageUrl == null || mImageUrl.isEmpty() || !mImageUrl.startsWith("http") ) {
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         } else {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);

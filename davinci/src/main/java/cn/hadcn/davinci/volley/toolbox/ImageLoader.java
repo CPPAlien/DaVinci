@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.hadcn.davinci.base;
+package cn.hadcn.davinci.volley.toolbox;
 
+import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
-import java.nio.ByteBuffer;
+import cn.hadcn.davinci.volley.Response.ErrorListener;
+import cn.hadcn.davinci.volley.Response.Listener;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import cn.hadcn.davinci.volley.Request;
 import cn.hadcn.davinci.volley.RequestQueue;
-import cn.hadcn.davinci.volley.Response.*;
 import cn.hadcn.davinci.volley.VolleyError;
 
 /**
@@ -72,8 +74,8 @@ public class ImageLoader {
      * must not block. Implementation with an LruCache is recommended.
      */
     public interface ImageCache {
-        ByteBuffer getBitmap(String url);
-        void putBitmap(String url, ByteBuffer bitmap);
+        public Bitmap getBitmap(String url);
+        public void putBitmap(String url, Bitmap bitmap);
     }
 
     /**
@@ -84,6 +86,35 @@ public class ImageLoader {
     public ImageLoader(RequestQueue queue, ImageCache imageCache) {
         mRequestQueue = queue;
         mCache = imageCache;
+    }
+
+    /**
+     * The default implementation of ImageListener which handles basic functionality
+     * of showing a default image until the network response is received, at which point
+     * it will switch to either the actual image or the error image.
+     * @param view The imageView that the listener is associated with.
+     * @param defaultImageResId Default image resource ID to use, or 0 if it doesn't exist.
+     * @param errorImageResId Error image resource ID to use, or 0 if it doesn't exist.
+     */
+    public static ImageListener getImageListener(final ImageView view,
+            final int defaultImageResId, final int errorImageResId) {
+        return new ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (errorImageResId != 0) {
+                    view.setImageResource(errorImageResId);
+                }
+            }
+
+            @Override
+            public void onResponse(ImageContainer response, boolean isImmediate) {
+                if (response.getBitmap() != null) {
+                    view.setImageBitmap(response.getBitmap());
+                } else if (defaultImageResId != 0) {
+                    view.setImageResource(defaultImageResId);
+                }
+            }
+        };
     }
 
     /**
@@ -110,7 +141,7 @@ public class ImageLoader {
          * image loading in order to, for example, run an animation to fade in network loaded
          * images.
          */
-        void onResponse(ImageContainer response, boolean isImmediate);
+        public void onResponse(ImageContainer response, boolean isImmediate);
     }
 
     /**
@@ -184,7 +215,7 @@ public class ImageLoader {
         final String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight, scaleType);
 
         // Try to look up the request in the cache of remote images.
-        ByteBuffer cachedBitmap = mCache.getBitmap(cacheKey);
+        Bitmap cachedBitmap = mCache.getBitmap(cacheKey);
         if (cachedBitmap != null) {
             // Return the cached bitmap.
             ImageContainer container = new ImageContainer(cachedBitmap, requestUrl, null, null);
@@ -209,7 +240,7 @@ public class ImageLoader {
 
         // The request is not already in flight. Send the new request to the network and
         // track it.
-        Request<ByteBuffer> newRequest = makeImageRequest(requestUrl, maxWidth, maxHeight, scaleType,
+        Request<Bitmap> newRequest = makeImageRequest(requestUrl, maxWidth, maxHeight, scaleType,
                 cacheKey);
 
         mRequestQueue.add(newRequest);
@@ -218,11 +249,11 @@ public class ImageLoader {
         return imageContainer;
     }
 
-    protected Request<ByteBuffer> makeImageRequest(String requestUrl, int maxWidth, int maxHeight,
-            ScaleType scaleType, final String cacheKey) {
-        return new ImageRequest(requestUrl, new Listener<ByteBuffer>() {
+    protected Request<Bitmap> makeImageRequest(String requestUrl, int maxWidth, int maxHeight,
+                                               ScaleType scaleType, final String cacheKey) {
+        return new ImageRequest(requestUrl, new Listener<Bitmap>() {
             @Override
-            public void onResponse(ByteBuffer response) {
+            public void onResponse(Bitmap response) {
                 onGetImageSuccess(cacheKey, response);
             }
         }, maxWidth, maxHeight, scaleType, Config.RGB_565, new ErrorListener() {
@@ -247,7 +278,7 @@ public class ImageLoader {
      * @param cacheKey The cache key that is associated with the image request.
      * @param response The bitmap that was returned from the network.
      */
-    protected void onGetImageSuccess(String cacheKey, ByteBuffer response) {
+    protected void onGetImageSuccess(String cacheKey, Bitmap response) {
         // cache the image that was fetched.
         mCache.putBitmap(cacheKey, response);
 
@@ -289,7 +320,7 @@ public class ImageLoader {
          * The most relevant bitmap for the container. If the image was in cache, the
          * Holder to use for the final bitmap (the one that pairs to the requested URL).
          */
-        private ByteBuffer mBytes;
+        private Bitmap mBitmap;
 
         private final ImageListener mListener;
 
@@ -301,13 +332,13 @@ public class ImageLoader {
 
         /**
          * Constructs a BitmapContainer object.
-         * @param bytes bytes (if it exists).
+         * @param bitmap The final bitmap (if it exists).
          * @param requestUrl The requested URL for this container.
          * @param cacheKey The cache key that identifies the requested URL for this container.
          */
-        public ImageContainer(ByteBuffer bytes, String requestUrl,
+        public ImageContainer(Bitmap bitmap, String requestUrl,
                 String cacheKey, ImageListener listener) {
-            mBytes = bytes;
+            mBitmap = bitmap;
             mRequestUrl = requestUrl;
             mCacheKey = cacheKey;
             mListener = listener;
@@ -342,8 +373,8 @@ public class ImageLoader {
         /**
          * Returns the bitmap associated with the request URL if it has been loaded, null otherwise.
          */
-        public ByteBuffer getBitmap() {
-            return mBytes;
+        public Bitmap getBitmap() {
+            return mBitmap;
         }
 
         /**
@@ -363,7 +394,7 @@ public class ImageLoader {
         private final Request<?> mRequest;
 
         /** The result of the request being tracked by this item */
-        private ByteBuffer mResponseBitmap;
+        private Bitmap mResponseBitmap;
 
         /** Error if one occurred for this response */
         private VolleyError mError;
@@ -441,7 +472,7 @@ public class ImageLoader {
                                 continue;
                             }
                             if (bir.getError() == null) {
-                                container.mBytes = bir.mResponseBitmap;
+                                container.mBitmap = bir.mResponseBitmap;
                                 container.mListener.onResponse(container, false);
                             } else {
                                 container.mListener.onErrorResponse(bir.getError());

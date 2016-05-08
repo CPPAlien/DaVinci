@@ -1,9 +1,5 @@
 package cn.hadcn.davinci.upload.impl;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
 
@@ -11,6 +7,10 @@ import java.io.File;
 
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
+import cn.hadcn.davinci.volley.DefaultRetryPolicy;
+import cn.hadcn.davinci.volley.RequestQueue;
+import cn.hadcn.davinci.volley.Response;
+import cn.hadcn.davinci.volley.VolleyError;
 
 /**
  * DaVinciUpload

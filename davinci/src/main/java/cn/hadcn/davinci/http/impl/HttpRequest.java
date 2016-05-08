@@ -1,15 +1,8 @@
 package cn.hadcn.davinci.http.impl;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +10,12 @@ import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.base.RequestMethod;
 import cn.hadcn.davinci.base.VolleyHttpBase;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
+import cn.hadcn.davinci.volley.AuthFailureError;
+import cn.hadcn.davinci.volley.DefaultRetryPolicy;
+import cn.hadcn.davinci.volley.Request;
+import cn.hadcn.davinci.volley.RequestQueue;
+import cn.hadcn.davinci.volley.Response;
+import cn.hadcn.davinci.volley.VolleyError;
 
 
 /**

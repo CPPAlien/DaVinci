@@ -19,15 +19,16 @@ package cn.hadcn.davinci.base;
 import android.graphics.Bitmap.Config;
 import android.widget.ImageView.ScaleType;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
 
 import java.nio.ByteBuffer;
+
+import cn.hadcn.davinci.volley.DefaultRetryPolicy;
+import cn.hadcn.davinci.volley.NetworkResponse;
+import cn.hadcn.davinci.volley.ParseError;
+import cn.hadcn.davinci.volley.Request;
+import cn.hadcn.davinci.volley.Response;
+import cn.hadcn.davinci.volley.VolleyLog;
+import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
 
 /**
  * A canned request for getting an image at a given URL and calling

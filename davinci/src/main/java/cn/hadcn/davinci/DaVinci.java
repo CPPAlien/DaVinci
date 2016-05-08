@@ -2,8 +2,6 @@ package cn.hadcn.davinci;
 
 import android.content.Context;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -15,6 +13,8 @@ import cn.hadcn.davinci.image.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
 import cn.hadcn.davinci.http.impl.PersistentCookieStore;
 import cn.hadcn.davinci.upload.impl.VinciUpload;
+import cn.hadcn.davinci.volley.RequestQueue;
+import cn.hadcn.davinci.volley.toolbox.Volley;
 
 
 /**

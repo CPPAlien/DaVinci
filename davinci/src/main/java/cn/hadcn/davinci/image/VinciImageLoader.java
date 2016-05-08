@@ -3,13 +3,12 @@ package cn.hadcn.davinci.image;
 import android.content.Context;
 import android.widget.ImageView;
 
-import com.android.volley.RequestQueue;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.base.ImageLoader;
+import cn.hadcn.davinci.volley.RequestQueue;
 
 
 /**

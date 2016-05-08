@@ -9,21 +9,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.Response.Listener;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
 
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cn.hadcn.davinci.volley.AuthFailureError;
+import cn.hadcn.davinci.volley.NetworkResponse;
+import cn.hadcn.davinci.volley.ParseError;
+import cn.hadcn.davinci.volley.Request;
+import cn.hadcn.davinci.volley.Response;
+import cn.hadcn.davinci.volley.Response.*;
+import cn.hadcn.davinci.volley.VolleyLog;
+import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
 
 
 public class UploadRequest extends Request<JSONObject> {

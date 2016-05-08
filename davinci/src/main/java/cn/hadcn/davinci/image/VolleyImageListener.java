@@ -5,12 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
-import com.android.volley.VolleyError;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.base.ImageLoader;
+import cn.hadcn.davinci.volley.VolleyError;
 
 /**
  *

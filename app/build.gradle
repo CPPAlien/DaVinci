@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     compile project(':davinci')
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     compile 'com.github.bumptech.glide:glide:3.7.0'
 }

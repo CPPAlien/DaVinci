@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.base.ImageLoader;
+import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.volley.RequestQueue;
 
 
@@ -47,7 +48,8 @@ public class VinciImageLoader {
         try {
             return mImageCache.getBitmap(name);
         } catch (NullPointerException e) {
-            throw new IllegalStateException("Disk Cache Not initialized");
+            VinciLog.w("Get Image failed, name = " + name);
+            return null;
         }
     }
 
@@ -55,7 +57,7 @@ public class VinciImageLoader {
         try {
             mImageCache.putBitmap(name, bitmap);
         } catch (NullPointerException e) {
-            throw new IllegalStateException("Disk Cache Not initialized");
+            VinciLog.e("Put Image failed, name cannot be null", e);
         }
     }
 

@@ -37,7 +37,7 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
 
     @Override
     protected ByteBuffer doInBackground(String... params) {
-        if ( mImageUrl == null || mImageUrl.isEmpty() || !mImageUrl.startsWith("http") ) {
+        if ( mImageUrl == null || mImageUrl.isEmpty() ) {
             return null;
         }
         return mImageCache.getBitmap(mImageUrl);

@@ -125,6 +125,16 @@ public class HttpRequest {
     }
 
     /**
+     * post method
+     * @param requestUrl request url of post, must include http:// as head
+     * @param requestListener listener
+     */
+    public void doPost(String requestUrl, OnDaVinciRequestListener requestListener) {
+        doRequest(RequestMethod.Way.POST,
+                requestUrl, null, null, requestListener);
+    }
+
+    /**
      * do http request
      * @param way GET or POST
      * @param url request url

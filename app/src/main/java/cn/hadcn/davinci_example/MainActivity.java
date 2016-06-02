@@ -1,5 +1,6 @@
 package cn.hadcn.davinci_example;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,12 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
             @Override
             public void onClick(View view) {
                 DaVinci.with(MainActivity.this).getHttpRequest().doGet("http://www.baidu.com/", null, null);
+            }
+        });
+        image3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ListActivity.class));
             }
         });
 

@@ -248,8 +248,6 @@ public class ImageLoader {
      * @param response The bitmap that was returned from the network.
      */
     protected void onGetImageSuccess(String cacheKey, ByteBuffer response) {
-        // cache the image that was fetched.
-        mCache.putBitmap(cacheKey, response);
 
         // remove the request from the list of in-flight requests.
         BatchedImageRequest request = mInFlightRequests.remove(cacheKey);

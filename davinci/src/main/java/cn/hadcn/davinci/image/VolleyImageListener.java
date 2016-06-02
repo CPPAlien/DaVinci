@@ -67,10 +67,11 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
             }
             mImageView.setImageBitmap(bitmap);
 
-            //cache image
+            // cache the image that was fetched.
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
+
             mImageCache.putBitmap(response.getRequestUrl(), ByteBuffer.wrap(byteArray));
         } else {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mLoadingImage));

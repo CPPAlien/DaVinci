@@ -17,8 +17,6 @@ import cn.hadcn.davinci.volley.RequestQueue;
  * Created by 90Chris on 2015/9/11.
  */
 public class VinciImageLoader {
-
-
     private String mCacheDir = null;
     private ImageLoader.ImageCache mImageCache;
     private ImageLoader mImageLoader;

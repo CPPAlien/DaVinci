@@ -3,7 +3,6 @@ package cn.hadcn.davinci.image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.widget.ImageView;
 
 import java.nio.ByteBuffer;
@@ -15,7 +14,7 @@ import cn.hadcn.davinci.base.ImageLoader;
  * read image from any where
  * Created by 90Chris on 2016/5/5.
  */
-public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
+public class ReadImageTask {
     private final int DEFAULT_IMAGE_LOADING = R.drawable.image_loading;
     private final int DEFAULT_IMAGE_ERROR = R.drawable.image_load_error;
 
@@ -35,16 +34,12 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
         mContext = context;
     }
 
-    @Override
-    protected ByteBuffer doInBackground(String... params) {
-        if ( mImageUrl == null || mImageUrl.isEmpty() ) {
-            return null;
+    public final void execute() {
+        if ( mImageUrl == null || mImageUrl.isEmpty() || !mImageUrl.startsWith("http") ) {
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
+            return;
         }
-        return mImageCache.getBitmap(mImageUrl);
-    }
-
-    @Override
-    protected void onPostExecute(ByteBuffer byteBuffer) {
+        ByteBuffer byteBuffer = mImageCache.getBitmap(mImageUrl);
         if ( byteBuffer != null ) {
             byte[] bytes = byteBuffer.array();
 
@@ -53,8 +48,6 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
 
             Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             mImageView.setImageBitmap(image);
-        } else if ( mImageUrl == null || mImageUrl.isEmpty() || !mImageUrl.startsWith("http") ) {
-            mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         } else {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);
@@ -65,8 +58,8 @@ public class ReadImageTask extends AsyncTask<String, Integer, ByteBuffer> {
 
     protected void setView(ImageView imageView, int image_loading, int image_error) {
         mImageView = imageView;
-        mLoadingImage = image_loading;
-        mErrorImage = image_error;
+        if ( mLoadingImage != 0 ) mLoadingImage = image_loading;
+        if ( mErrorImage != 0 ) mErrorImage = image_error;
     }
 
     protected void setView(ImageView imageView) {

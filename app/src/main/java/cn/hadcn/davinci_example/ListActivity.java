@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.hadcn.davinci.DaVinci;
+import cn.hadcn.davinci.base.VinciLog;
 
 public class ListActivity extends AppCompatActivity {
     private ImageAdapter mAdapter;
@@ -36,7 +37,7 @@ public class ListActivity extends AppCompatActivity {
         findViewById(R.id.refresh_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                urls.add("http://g.hiphotos.baidu.com/image/pic/item/54fbb2fb43166d2219dec065442309f79152d292.jpg");
+                urls.add(0, "http://g.hiphotos.baidu.com/image/pic/item/54fbb2fb43166d2219dec065442309f79152d292.jpg");
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -46,12 +47,14 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            VinciLog.e("viewType = " + viewType);
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            VinciLog.e("pos = " + position);
             DaVinci.with().getImageLoader().load(urls.get(position)).into(holder.ivImage);
         }
 

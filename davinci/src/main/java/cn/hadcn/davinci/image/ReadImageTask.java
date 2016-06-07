@@ -35,7 +35,7 @@ public class ReadImageTask {
     }
 
     public final void execute() {
-        if ( mImageUrl == null || mImageUrl.isEmpty() || !mImageUrl.startsWith("http") ) {
+        if ( mImageUrl == null || mImageUrl.isEmpty() ) {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             return;
         }
@@ -48,11 +48,13 @@ public class ReadImageTask {
 
             Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             mImageView.setImageBitmap(image);
-        } else {
+        } else if ( mImageUrl.startsWith("http") ) {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);
             listener.setMaxSize(mMaxSize);
             mImageLoader.get(mImageUrl, listener);
+        } else {
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         }
     }
 

@@ -58,8 +58,8 @@ public class ReadImageTask {
 
     protected void setView(ImageView imageView, int image_loading, int image_error) {
         mImageView = imageView;
-        if ( mLoadingImage != 0 ) mLoadingImage = image_loading;
-        if ( mErrorImage != 0 ) mErrorImage = image_error;
+        if ( image_loading != 0 ) mLoadingImage = image_loading;
+        if ( image_error != 0 ) mErrorImage = image_error;
     }
 
     protected void setView(ImageView imageView) {

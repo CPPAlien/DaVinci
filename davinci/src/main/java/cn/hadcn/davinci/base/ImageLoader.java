@@ -54,11 +54,11 @@ public class ImageLoader {
      * that we can coalesce multiple requests to the same URL into a single network request.
      */
     private final HashMap<String, BatchedImageRequest> mInFlightRequests =
-            new HashMap<String, BatchedImageRequest>();
+            new HashMap<>();
 
     /** HashMap of the currently pending responses (waiting to be delivered). */
     private final HashMap<String, BatchedImageRequest> mBatchedResponses =
-            new HashMap<String, BatchedImageRequest>();
+            new HashMap<>();
 
     /** Handler to the main thread. */
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -367,7 +367,7 @@ public class ImageLoader {
         private VolleyError mError;
 
         /** List of all of the active ImageContainers that are interested in the request */
-        private final LinkedList<ImageContainer> mContainers = new LinkedList<ImageContainer>();
+        private final LinkedList<ImageContainer> mContainers = new LinkedList<>();
 
         /**
          * Constructs a new BatchedImageRequest object

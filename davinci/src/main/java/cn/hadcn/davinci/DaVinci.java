@@ -8,6 +8,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
 
+import cn.hadcn.davinci.base.LogLevel;
 import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.image.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
@@ -52,13 +53,13 @@ public class DaVinci {
      * advantages
      * 1, you do not use pass context in request any more;
      * 2, application context is special in whole application life, so DaVinci do not need hook activity, optimize the memory management;
-     * @param isEnableDebug is log printed
+     * @param logLevel log level
      * @param debugTag log tag
      * @param context context
      */
-    public static void init(boolean isEnableDebug, String debugTag, Context context){
+    public static void init(LogLevel logLevel, String debugTag, Context context){
         sDaVinci = new DaVinci(context);
-        VinciLog.init(isEnableDebug, debugTag, context);
+        VinciLog.init(logLevel, debugTag, context);
     }
 
     /**

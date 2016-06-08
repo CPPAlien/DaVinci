@@ -59,7 +59,7 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
             writeBitmapToFile( data, editor);
             mDiskCache.flush();
             editor.commit();
-            VinciLog.i("Image saved on disk, cacheKey = " + key);
+            VinciLog.d("Image saved on disk, cacheKey = " + key);
         } catch (IOException e) {
             VinciLog.e("Image put on disk cache failed, key = " + key, e);
             try {

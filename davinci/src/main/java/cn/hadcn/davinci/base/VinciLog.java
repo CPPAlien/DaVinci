@@ -14,26 +14,31 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
- * PtLog
+ * VinciLog
  * Created by 90Chris on 2016/3/30.
  */
 public class VinciLog {
-    private static String LOG_TAG = "PtLog";
-    private static boolean enableLog = false;//true: put on log display in logcat, put off it when release
+    private static final int DEBUG_CODE = 8;
+    private static final int INFO_CODE = 4;
+    private static final int WARN_CODE = 2;
+    private static final int ERROR_CODE = 1;
+
+    private static String LOG_TAG = "VinciLog";
     private static boolean enableLogFile = false; //true: save log at local, false, do not save log
+    private static LogLevel logLevel = LogLevel.NONE;
 
     private static File logFile;
     private static Context mContext;
 
     /**
      * init, you should call it before any PtLog used
-     * @param isEnable log is displayed
+     * @param level log level
      * @param tag log tag
      * @param context context
      */
-    public static void init(boolean isEnable, String tag, Context context) {
+    public static void init(LogLevel level, String tag, Context context) {
         LOG_TAG = tag;
-        enableLog = isEnable;
+        logLevel = level;
         mContext = context;
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(context);
@@ -45,7 +50,7 @@ public class VinciLog {
      * the log saved under /Android/data/{package_name}/log
      */
     public static void startLogSave()  {
-        if ( !enableLog ) return;
+        if ( logLevel == LogLevel.NONE ) return;
         String fileName = "log.txt";
         enableLogFile = true;
         File dir = mContext.getCacheDir();
@@ -63,21 +68,35 @@ public class VinciLog {
     private static final int RETURN_NOLOG = 99;
 
     public static int d( String msg ) {
-        if ( !enableLog ) return RETURN_NOLOG;
+        if ( (logLevel.getValue() & DEBUG_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
         appendLog("[DEBUG]:" + LOG_TAG + ":" + con);
         return Log.d(LOG_TAG, con);
     }
 
+    public static int i( String msg ) {
+        if ( (logLevel.getValue() & INFO_CODE) == 0 ) return RETURN_NOLOG;
+        String con = dressUpTag() + ":" + msg;
+        appendLog("[INFO]:" + LOG_TAG + ":" + con);
+        return Log.i(LOG_TAG, con);
+    }
+
+    public static int w( String msg ) {
+        if ( (logLevel.getValue() & WARN_CODE) == 0 ) return RETURN_NOLOG;
+        String con = dressUpTag() + ":" + msg;
+        appendLog("[WARNING]:" + LOG_TAG + ":" + con);
+        return Log.w(LOG_TAG, con);
+    }
+
     public static int e( String msg ) {
-        if ( !enableLog ) return RETURN_NOLOG;
+        if ( (logLevel.getValue() & ERROR_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
         appendLog("[ERROR]:" + LOG_TAG + ":" + con);
         return Log.e(LOG_TAG, con);
     }
 
     public static int e( String msg, Throwable ex ) {
-        if ( !enableLog ) return RETURN_NOLOG;
+        if ( (logLevel.getValue() & ERROR_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
 
         Writer writer = new StringWriter();
@@ -88,20 +107,6 @@ public class VinciLog {
 
         appendLog("[ERROR]:" + LOG_TAG + ":" + con + ":" + result);
         return Log.e(LOG_TAG, con, ex);
-    }
-
-    public static int i( String msg ) {
-        if ( !enableLog ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
-        appendLog("[WARNING]:" + LOG_TAG + ":" + con);
-        return Log.i(LOG_TAG, con);
-    }
-
-    public static int w( String msg ) {
-        if ( !enableLog ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
-        appendLog("[WARNING]:" + LOG_TAG + ":" + con);
-        return Log.w(LOG_TAG, con);
     }
 
     /**

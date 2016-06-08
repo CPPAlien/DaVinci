@@ -6,8 +6,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.hadcn.davinci.base.RequestWay;
 import cn.hadcn.davinci.base.VinciLog;
-import cn.hadcn.davinci.base.RequestMethod;
 import cn.hadcn.davinci.base.VolleyHttpBase;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 import cn.hadcn.davinci.volley.AuthFailureError;
@@ -16,7 +16,6 @@ import cn.hadcn.davinci.volley.Request;
 import cn.hadcn.davinci.volley.RequestQueue;
 import cn.hadcn.davinci.volley.Response;
 import cn.hadcn.davinci.volley.VolleyError;
-
 
 /**
  * BaseRequest
@@ -98,7 +97,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doGet(String requestUrl, Map<String, Object> params, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestMethod.Way.GET,
+        doRequest(RequestWay.GET,
                 requestUrl, params, null, requestListener);
     }
 
@@ -109,7 +108,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doPost(String requestUrl, JSONObject postJsonData, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestMethod.Way.POST,
+        doRequest(RequestWay.POST,
                 requestUrl, null, postJsonData, requestListener);
     }
 
@@ -120,7 +119,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doPost(String requestUrl, String postBodyString, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestMethod.Way.POST,
+        doRequest(RequestWay.POST,
                 requestUrl, null, postBodyString, requestListener);
     }
 
@@ -130,7 +129,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doPost(String requestUrl, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestMethod.Way.POST,
+        doRequest(RequestWay.POST,
                 requestUrl, null, null, requestListener);
     }
 
@@ -142,7 +141,7 @@ public class HttpRequest {
      * @param postBody post method parameters
      * @param requestListener listener
      */
-    private void doRequest(RequestMethod.Way way, String url, Map<String, Object> urlMap, Object postBody, final OnDaVinciRequestListener requestListener) {
+    private void doRequest(RequestWay way, String url, Map<String, Object> urlMap, Object postBody, final OnDaVinciRequestListener requestListener) {
         mRequestListener = requestListener;
         String requestUrl = url;
 
@@ -152,11 +151,9 @@ public class HttpRequest {
             for ( String key : urlMap.keySet() ) {
                 requestUrl = requestUrl + key + "=" + urlMap.get(key) + "&";
             }
-        } else {
-            VinciLog.i("url map = null");
         }
 
-        VinciLog.i("Request " + requestUrl);
+        VinciLog.d("do " + way.getType() + " request, url = " + requestUrl);
         DaVinciHttp jsonObjectRequest = getRequest(way, requestUrl, postBody);
 
         if ( jsonObjectRequest == null ){
@@ -171,7 +168,7 @@ public class HttpRequest {
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    private DaVinciHttp getRequest(RequestMethod.Way way, String requestUrl, Object postBody) {
+    private DaVinciHttp getRequest(RequestWay way, String requestUrl, Object postBody) {
         int volleyWay;
 
         //get volley method code, get or post
@@ -183,8 +180,6 @@ public class HttpRequest {
                 volleyWay = Request.Method.POST;
                 if ( null != postBody ){
                     VinciLog.i("doPost data = " + postBody.toString());
-                } else {
-                    VinciLog.i("doPost map = null");
                 }
                 break;
         }
@@ -213,7 +208,7 @@ public class HttpRequest {
 
         @Override
         public void onResponse(String response) {
-            VinciLog.i("http response:" + response);
+            VinciLog.d("response:" + response);
             if ( mRequestListener != null ) {
                 mRequestListener.onDaVinciRequestSuccess(response);
             }

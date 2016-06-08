@@ -41,7 +41,7 @@ public class VinciUpload {
     public void uploadFile(String uploadUrl, String filePath, final OnDaVinciUploadListener listener) {
         File file = new File(filePath);
         if ( !file.exists() ) {
-            VinciLog.e("Upload file is not exists");
+            VinciLog.w("Upload file is not exists");
             listener.onDaVinciUploadFailed("Upload file is not exists");
             return;
         }

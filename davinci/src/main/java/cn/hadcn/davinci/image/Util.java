@@ -109,7 +109,7 @@ final class Util {
                 imageView.setImageDrawable(gifDrawable);
                 return true;
             } catch (Throwable e) {
-                VinciLog.d("pl.droidsonroids.gif.GifDrawable not found");
+                VinciLog.w("pl.droidsonroids.gif.GifDrawable not found");
             }
         }
         return false;

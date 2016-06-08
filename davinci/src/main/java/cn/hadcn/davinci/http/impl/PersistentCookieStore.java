@@ -148,12 +148,12 @@ public class PersistentCookieStore implements CookieStore {
         List<HttpCookie> targetCookies = new ArrayList<HttpCookie>();
         // If the stored URI does not have a path then it must match any URI in
         // the same domain
-        for (URI storedUri : allCookies.keySet()) {
+        for (Map.Entry<URI, Set<HttpCookie>> entry : allCookies.entrySet()) {
             // Check ith the domains match according to RFC 6265
-            if (checkDomainsMatch(storedUri.getHost(), uri.getHost())) {
+            if (checkDomainsMatch(entry.getKey().getHost(), uri.getHost())) {
                 // Check if the paths match according to RFC 6265
-                if (checkPathsMatch(storedUri.getPath(), uri.getPath())) {
-                    targetCookies.addAll(allCookies.get(storedUri));
+                if (checkPathsMatch(entry.getKey().getPath(), uri.getPath())) {
+                    targetCookies.addAll(entry.getValue());
                 }
             }
         }

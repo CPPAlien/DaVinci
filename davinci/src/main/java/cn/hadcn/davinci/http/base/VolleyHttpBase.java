@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.hadcn.davinci.base;
+package cn.hadcn.davinci.http.base;
 
 
 import java.io.UnsupportedEncodingException;

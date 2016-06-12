@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.hadcn.davinci.base;
+package cn.hadcn.davinci.image.base;
 
 import android.graphics.Bitmap.Config;
 import android.os.Handler;

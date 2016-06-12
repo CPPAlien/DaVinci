@@ -1,4 +1,4 @@
-package cn.hadcn.davinci.base;
+package cn.hadcn.davinci.log;
 
 import android.content.Context;
 import android.util.Log;

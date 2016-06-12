@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.hadcn.davinci.base;
+package cn.hadcn.davinci.image.base;
 
 import android.graphics.Bitmap.Config;
 import android.widget.ImageView.ScaleType;

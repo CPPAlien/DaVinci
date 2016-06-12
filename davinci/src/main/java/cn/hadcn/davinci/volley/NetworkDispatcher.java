@@ -24,6 +24,8 @@ import android.os.SystemClock;
 
 import java.util.concurrent.BlockingQueue;
 
+import cn.hadcn.davinci.log.VinciLog;
+
 /**
  * Provides a thread for performing network dispatch from a queue of requests.
  *
@@ -95,7 +97,6 @@ public class NetworkDispatcher extends Thread {
                 }
                 continue;
             }
-
             try {
                 request.addMarker("network-queue-take");
 

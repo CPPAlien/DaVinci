@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.hadcn.davinci.base.VinciLog;
+import cn.hadcn.davinci.log.VinciLog;
 import pl.droidsonroids.gif.GifDrawable;
 
 final class Util {
@@ -37,7 +37,7 @@ final class Util {
     private Util() {
     }
 
-    static String readFully(Reader reader) throws IOException {
+    public static String readFully(Reader reader) throws IOException {
         try {
             StringWriter writer = new StringWriter();
             char[] buffer = new char[1024];
@@ -55,7 +55,7 @@ final class Util {
     * Deletes the contents of {@code dir}. Throws an IOException if any file
     * could not be deleted, or if {@code dir} is not a readable directory.
     */
-    static void deleteContents(File dir) throws IOException {
+    public static void deleteContents(File dir) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) {
             throw new IOException("not a readable directory: " + dir);
@@ -70,7 +70,7 @@ final class Util {
         }
     }
 
-    static void closeQuietly(/*Auto*/Closeable closeable) {
+    public static void closeQuietly(/*Auto*/Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();

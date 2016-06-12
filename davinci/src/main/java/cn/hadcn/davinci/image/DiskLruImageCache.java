@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
-import cn.hadcn.davinci.base.ImageLoader;
-import cn.hadcn.davinci.base.VinciLog;
+import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.log.VinciLog;
 
 
 /**

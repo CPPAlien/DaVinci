@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.hadcn.davinci.DaVinci;
-import cn.hadcn.davinci.base.VinciLog;
 
 public class ListActivity extends AppCompatActivity {
     private ImageAdapter mAdapter;
@@ -47,14 +46,12 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            VinciLog.e("viewType = " + viewType);
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            VinciLog.e("pos = " + position);
             DaVinci.with().getImageLoader().load(urls.get(position)).into(holder.ivImage);
         }
 

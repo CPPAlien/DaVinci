@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import java.io.File;
 import java.nio.ByteBuffer;
 
-import cn.hadcn.davinci.base.ImageLoader;
-import cn.hadcn.davinci.base.VinciLog;
+import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.RequestQueue;
 
 

@@ -40,9 +40,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RequestQueue {
 
     /** Callback interface for completed requests. */
-    public static interface RequestFinishedListener<T> {
+    public interface RequestFinishedListener<T> {
         /** Called when a request has finished processing. */
-        public void onRequestFinished(Request<T> request);
+        void onRequestFinished(Request<T> request);
     }
 
     /** Used for generating monotonically-increasing sequence numbers for requests. */
@@ -59,25 +59,22 @@ public class RequestQueue {
      * </ul>
      */
     private final Map<String, Queue<Request<?>>> mWaitingRequests =
-            new HashMap<String, Queue<Request<?>>>();
+            new HashMap<>();
 
     /**
      * The set of all requests currently being processed by this RequestQueue. A Request
      * will be in this set if it is waiting in any queue or currently being processed by
      * any dispatcher.
      */
-    private final Set<Request<?>> mCurrentRequests = new HashSet<Request<?>>();
+    private final Set<Request<?>> mCurrentRequests = new HashSet<>();
 
     /** The cache triage queue. */
     private final PriorityBlockingQueue<Request<?>> mCacheQueue =
-        new PriorityBlockingQueue<Request<?>>();
+        new PriorityBlockingQueue<>();
 
     /** The queue of requests that are actually going out to the network. */
     private final PriorityBlockingQueue<Request<?>> mNetworkQueue =
-        new PriorityBlockingQueue<Request<?>>();
-
-    /** Number of network request dispatcher threads to start. */
-    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
+        new PriorityBlockingQueue<>();
 
     /** Cache interface for retrieving and storing responses. */
     private final Cache mCache;
@@ -94,8 +91,8 @@ public class RequestQueue {
     /** The cache dispatcher. */
     private CacheDispatcher mCacheDispatcher;
 
-    private List<RequestFinishedListener> mFinishedListeners =
-            new ArrayList<RequestFinishedListener>();
+    private final List<RequestFinishedListener> mFinishedListeners =
+            new ArrayList<>();
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -126,16 +123,6 @@ public class RequestQueue {
     }
 
     /**
-     * Creates the worker pool. Processing will not begin until {@link #start()} is called.
-     *
-     * @param cache A Cache to use for persisting responses to disk
-     * @param network A Network interface for performing HTTP requests
-     */
-    public RequestQueue(Cache cache, Network network) {
-        this(cache, network, DEFAULT_NETWORK_THREAD_POOL_SIZE);
-    }
-
-    /**
      * Starts the dispatchers in this queue.
      */
     public void start() {
@@ -160,9 +147,9 @@ public class RequestQueue {
         if (mCacheDispatcher != null) {
             mCacheDispatcher.quit();
         }
-        for (int i = 0; i < mDispatchers.length; i++) {
-            if (mDispatchers[i] != null) {
-                mDispatchers[i].quit();
+        for (NetworkDispatcher mDispatcher : mDispatchers) {
+            if (mDispatcher != null) {
+                mDispatcher.quit();
             }
         }
     }
@@ -186,7 +173,7 @@ public class RequestQueue {
      * {@link RequestQueue#cancelAll(RequestFilter)}.
      */
     public interface RequestFilter {
-        public boolean apply(Request<?> request);
+        boolean apply(Request<?> request);
     }
 
     /**
@@ -248,7 +235,7 @@ public class RequestQueue {
                 // There is already a request in flight. Queue up.
                 Queue<Request<?>> stagedRequests = mWaitingRequests.get(cacheKey);
                 if (stagedRequests == null) {
-                    stagedRequests = new LinkedList<Request<?>>();
+                    stagedRequests = new LinkedList<>();
                 }
                 stagedRequests.add(request);
                 mWaitingRequests.put(cacheKey, stagedRequests);

@@ -1,4 +1,4 @@
-package cn.hadcn.davinci.base;
+package cn.hadcn.davinci.http.base;
 
 /**
  * RequestMethod

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.hadcn.davinci.DaVinci;
-import cn.hadcn.davinci.base.LogLevel;
+import cn.hadcn.davinci.log.LogLevel;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         setContentView(R.layout.activity_main);
 
 
-        DaVinci.init(LogLevel.DEBUG, "DaVinciTest", this);
+        DaVinci.init(5, LogLevel.DEBUG, "DaVinciTest", this);
         DaVinci.with(this).enableCookie();
 
 
@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         Map<String, Object> map = new HashMap<>();
         map.put("q", "Beijing,cn");
         map.put("appid", "2de143494c0b295cca9337e1e96b00e0");
+        DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
+
+        DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
+
         DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
 
         image3.setOnClickListener(new View.OnClickListener() {

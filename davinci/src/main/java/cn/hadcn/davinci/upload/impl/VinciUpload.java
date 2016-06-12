@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-import cn.hadcn.davinci.base.VinciLog;
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
 import cn.hadcn.davinci.volley.DefaultRetryPolicy;
 import cn.hadcn.davinci.volley.RequestQueue;

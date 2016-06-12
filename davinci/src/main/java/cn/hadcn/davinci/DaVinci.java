@@ -8,14 +8,14 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
 
-import cn.hadcn.davinci.base.LogLevel;
-import cn.hadcn.davinci.base.VinciLog;
+import cn.hadcn.davinci.base.VolleyManager;
+import cn.hadcn.davinci.log.LogLevel;
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.image.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
 import cn.hadcn.davinci.http.impl.PersistentCookieStore;
 import cn.hadcn.davinci.upload.impl.VinciUpload;
 import cn.hadcn.davinci.volley.RequestQueue;
-import cn.hadcn.davinci.volley.toolbox.Volley;
 
 
 /**
@@ -23,6 +23,9 @@ import cn.hadcn.davinci.volley.toolbox.Volley;
  * Created by 90Chris on 2015/9/10.
  */
 public class DaVinci {
+    /** Number of network request dispatcher threads to start. */
+    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
+
     private static RequestQueue mRequestQueue;
     private static VinciImageLoader mDaImageLoader;
     private static DaVinci sDaVinci = null;
@@ -32,7 +35,7 @@ public class DaVinci {
 
     public static DaVinci with(Context context) {
         if ( sDaVinci == null ) {
-            sDaVinci = new DaVinci(context.getApplicationContext());
+            sDaVinci = new DaVinci(context.getApplicationContext(), 0);
         }
         return sDaVinci;
     }
@@ -58,7 +61,22 @@ public class DaVinci {
      * @param context context
      */
     public static void init(LogLevel logLevel, String debugTag, Context context){
-        sDaVinci = new DaVinci(context);
+        init(0, logLevel, debugTag, context);
+    }
+
+
+    /**
+     * init DaVinci instance, it's better to put it into application class
+     * advantages
+     * 1, you do not use pass context in request any more;
+     * 2, application context is special in whole application life, so DaVinci do not need hook activity, optimize the memory management;
+     * @param poolSize thread pool size
+     * @param logLevel log level
+     * @param debugTag log tag
+     * @param context context
+     */
+    public static void init(int poolSize, LogLevel logLevel, String debugTag, Context context) {
+        sDaVinci = new DaVinci(context, poolSize);
         VinciLog.init(logLevel, debugTag, context);
     }
 
@@ -67,9 +85,12 @@ public class DaVinci {
      * but for image loader, there is only one instance for whole application
      * @param context context
      */
-    private DaVinci(Context context) {
+    private DaVinci(Context context, int poolSize) {
+        if ( poolSize <= 0 ) {
+            poolSize = DEFAULT_NETWORK_THREAD_POOL_SIZE;
+        }
         mContext = context;
-        mRequestQueue = Volley.newRequestQueue(context);
+        mRequestQueue = VolleyManager.newRequestQueue(context, poolSize);
         mDaImageLoader = new VinciImageLoader(context, mRequestQueue);
     }
 

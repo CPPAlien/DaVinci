@@ -6,9 +6,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.hadcn.davinci.base.RequestWay;
-import cn.hadcn.davinci.base.VinciLog;
-import cn.hadcn.davinci.base.VolleyHttpBase;
+import cn.hadcn.davinci.http.base.RequestWay;
+import cn.hadcn.davinci.log.VinciLog;
+import cn.hadcn.davinci.http.base.VolleyHttpBase;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 import cn.hadcn.davinci.volley.AuthFailureError;
 import cn.hadcn.davinci.volley.DefaultRetryPolicy;

@@ -67,35 +67,35 @@ public class VinciLog {
 
     private static final int RETURN_NOLOG = 99;
 
-    public static int d( String msg ) {
+    public static int d( String msg, Object... args ) {
         if ( (logLevel.getValue() & DEBUG_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
         appendLog("[DEBUG]:" + LOG_TAG + ":" + con);
         return Log.d(LOG_TAG, con);
     }
 
-    public static int i( String msg ) {
+    public static int i( String msg, Object... args ) {
         if ( (logLevel.getValue() & INFO_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
         appendLog("[INFO]:" + LOG_TAG + ":" + con);
         return Log.i(LOG_TAG, con);
     }
 
-    public static int w( String msg ) {
+    public static int w( String msg, Object... args ) {
         if ( (logLevel.getValue() & WARN_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
         appendLog("[WARNING]:" + LOG_TAG + ":" + con);
         return Log.w(LOG_TAG, con);
     }
 
-    public static int e( String msg ) {
+    public static int e( String msg, Object... args ) {
         if ( (logLevel.getValue() & ERROR_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
         appendLog("[ERROR]:" + LOG_TAG + ":" + con);
         return Log.e(LOG_TAG, con);
     }
 
-    public static int e( String msg, Throwable ex ) {
+    public static int e( String msg, Throwable ex, Object... args ) {
         if ( (logLevel.getValue() & ERROR_CODE) == 0 ) return RETURN_NOLOG;
         String con = dressUpTag() + ":" + msg;
 
@@ -146,7 +146,11 @@ public class VinciLog {
 
         int lastIndex = className.lastIndexOf(".");
         className = className.substring(lastIndex + 1, className.length());
+        String caller = className + "." + methodName + "(" + fireName + ":" + lineNum + ")";
+        return String.format(Locale.US, "[%d] %s", Thread.currentThread().getId(), caller);
+    }
 
-        return className + "." + methodName + "(" + fireName + ":" + lineNum + ")";
+    private static String buildMessage(String format, Object... args) {
+        return (args == null) ? format : String.format(Locale.US, format, args);
     }
 }

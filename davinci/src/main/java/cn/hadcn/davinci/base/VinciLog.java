@@ -69,35 +69,35 @@ public class VinciLog {
 
     public static int d( String msg, Object... args ) {
         if ( (logLevel.getValue() & DEBUG_CODE) == 0 ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
+        String con = dressUpTag() + ":" + buildMessage(msg, args);
         appendLog("[DEBUG]:" + LOG_TAG + ":" + con);
         return Log.d(LOG_TAG, con);
     }
 
     public static int i( String msg, Object... args ) {
         if ( (logLevel.getValue() & INFO_CODE) == 0 ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
+        String con = dressUpTag() + ":" + buildMessage(msg, args);
         appendLog("[INFO]:" + LOG_TAG + ":" + con);
         return Log.i(LOG_TAG, con);
     }
 
     public static int w( String msg, Object... args ) {
         if ( (logLevel.getValue() & WARN_CODE) == 0 ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
+        String con = dressUpTag() + ":" + buildMessage(msg, args);
         appendLog("[WARNING]:" + LOG_TAG + ":" + con);
         return Log.w(LOG_TAG, con);
     }
 
     public static int e( String msg, Object... args ) {
         if ( (logLevel.getValue() & ERROR_CODE) == 0 ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
+        String con = dressUpTag() + ":" + buildMessage(msg, args);
         appendLog("[ERROR]:" + LOG_TAG + ":" + con);
         return Log.e(LOG_TAG, con);
     }
 
     public static int e( String msg, Throwable ex, Object... args ) {
         if ( (logLevel.getValue() & ERROR_CODE) == 0 ) return RETURN_NOLOG;
-        String con = dressUpTag() + ":" + msg;
+        String con = dressUpTag() + ":" + buildMessage(msg, args);
 
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);

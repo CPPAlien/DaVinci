@@ -26,12 +26,10 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("q", "Beijing,cn");
-        map.put("appid", "2de143494c0b295cca9337e1e96b00e0");
+
         DaVinci.init(LogLevel.DEBUG, "DaVinciTest", this);
         DaVinci.with(this).enableCookie();
-        DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
+
 
         ImageView image1 = (ImageView)findViewById(R.id.image1);
         ImageView image2 = (ImageView)findViewById(R.id.image2);
@@ -39,13 +37,19 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         DaVinci.with(this).getImageLoader().load("http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif").into(image1);
 
         Glide.with(this).load("http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif").into(image2);
-        DaVinci.with(this).getImageLoader().load( "http://img.ugirls.com/uploads/cooperate/baidu/20160408jzx3.jpg").resize(400).into(image3);
+        DaVinci.with(this).getImageLoader().load( "http://photo.enterdesk.com/2011-11-26/enterdesk.com-1CB20FDF5918603F9264E5BFDC4DF691.jpg").resize(400).into(image3);
         image2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DaVinci.with(MainActivity.this).getHttpRequest().doGet("http://www.baidu.com/", null, null);
             }
         });
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("q", "Beijing,cn");
+        map.put("appid", "2de143494c0b295cca9337e1e96b00e0");
+        DaVinci.with(this).getHttpRequest().doGet("http://api.openweathermap.org/data/2.5/weather", map, this);
+
         image3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -49,7 +49,7 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
     public void putBitmap( String name, ByteBuffer data ) {
         String key = Util.generateKey(name);
         if ( key.isEmpty() ) return;
-        mMemoryCache.putBitmap(key, data);
+        mMemoryCache.putMemCache(key, data);
         DiskLruCache.Editor editor = null;
         try {
             editor = mDiskCache.edit( key );
@@ -59,7 +59,6 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
             writeBitmapToFile( data, editor);
             mDiskCache.flush();
             editor.commit();
-            VinciLog.d("Image saved on disk, cacheKey = " + key);
         } catch (IOException e) {
             VinciLog.e("Image put on disk cache failed, key = " + key, e);
             try {
@@ -75,7 +74,7 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
     public ByteBuffer getBitmap(String name) {
         String key = Util.generateKey(name);
         if ( key.isEmpty() ) return null;
-        ByteBuffer bitmap = mMemoryCache.getBitmap(key);
+        ByteBuffer bitmap = mMemoryCache.getMemCache(key);
         if ( bitmap != null ) {
             return bitmap;
         }
@@ -93,7 +92,7 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
                 byte[] bytes = new byte[size];
                 if ( buffIn.read(bytes) == -1) return null;
                 bitmap = ByteBuffer.wrap(bytes);
-                mMemoryCache.putBitmap(key, bitmap);
+                mMemoryCache.putMemCache(key, bitmap);
             }
         } catch ( IOException e ) {
             e.printStackTrace();

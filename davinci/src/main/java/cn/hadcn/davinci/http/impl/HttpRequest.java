@@ -153,7 +153,7 @@ public class HttpRequest {
             }
         }
 
-        VinciLog.d("do " + way.getType() + " request, url = " + requestUrl);
+        VinciLog.d("Do " + way.getType() + " request, url = " + requestUrl);
         DaVinciHttp jsonObjectRequest = getRequest(way, requestUrl, postBody);
 
         if ( jsonObjectRequest == null ){
@@ -179,7 +179,7 @@ public class HttpRequest {
             default:
                 volleyWay = Request.Method.POST;
                 if ( null != postBody ){
-                    VinciLog.i("doPost data = " + postBody.toString());
+                    VinciLog.d("doPost data = " + postBody.toString());
                 }
                 break;
         }

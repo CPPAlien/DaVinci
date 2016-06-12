@@ -183,15 +183,6 @@ public class ImageLoader {
 
         final String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight, scaleType);
 
-        // Try to look up the request in the cache of remote images.
-        ByteBuffer cachedBitmap = mCache.getBitmap(cacheKey);
-        if (cachedBitmap != null) {
-            // Return the cached bitmap.
-            ImageContainer container = new ImageContainer(cachedBitmap, requestUrl, null, null);
-            imageListener.onResponse(container, true);
-            return container;
-        }
-
         // The bitmap did not exist in the cache, fetch it!
         ImageContainer imageContainer =
                 new ImageContainer(null, requestUrl, cacheKey, imageListener);

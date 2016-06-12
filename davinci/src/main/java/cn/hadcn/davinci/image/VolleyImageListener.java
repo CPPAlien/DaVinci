@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.base.ImageLoader;
+import cn.hadcn.davinci.base.VinciLog;
 import cn.hadcn.davinci.volley.VolleyError;
 
 /**
@@ -44,9 +45,15 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
         ByteBuffer byteBuffer = response.getBitmap();
         if ( null != byteBuffer ) {
             byte[] bytes = byteBuffer.array();
-            // if it's gif, show as gif
-            if ( Util.doGif(mImageView, bytes) ) return;
+            VinciLog.d("Image loaded success, and saved in cache, url = " + response.getRequestUrl());
 
+            // if it's gif, show as gif, and save in cache
+            if ( Util.doGif(mImageView, bytes) ) {
+                cacheImage(response.getRequestUrl(), ByteBuffer.wrap(bytes));
+                return;
+            }
+
+            // deal with bitmap
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
             int bHeight = bitmap.getHeight();
@@ -72,7 +79,7 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
 
-            mImageCache.putBitmap(response.getRequestUrl(), ByteBuffer.wrap(byteArray));
+            cacheImage(response.getRequestUrl(), ByteBuffer.wrap(byteArray));
         } else {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mLoadingImage));
         }
@@ -81,5 +88,9 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     @Override
     public void onErrorResponse(VolleyError error) {
         mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
+    }
+
+    private void cacheImage(String url, ByteBuffer byteBuffer) {
+        mImageCache.putBitmap(url, byteBuffer);
     }
 }

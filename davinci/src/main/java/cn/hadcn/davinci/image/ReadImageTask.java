@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.R;
 import cn.hadcn.davinci.base.ImageLoader;
+import cn.hadcn.davinci.base.VinciLog;
 
 /**
  * read image from any where
@@ -42,6 +43,7 @@ public class ReadImageTask {
         ByteBuffer byteBuffer = mImageCache.getBitmap(mImageUrl);
         if ( byteBuffer != null ) {
             byte[] bytes = byteBuffer.array();
+            VinciLog.d("Load image from cache, url = " + mImageUrl);
 
             // if it's gif, show as gif
             if ( Util.doGif(mImageView, bytes) ) return;
@@ -52,6 +54,7 @@ public class ReadImageTask {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);
             listener.setMaxSize(mMaxSize);
+            VinciLog.d("Load image from web, url = " + mImageUrl );
             mImageLoader.get(mImageUrl, listener);
         } else {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));

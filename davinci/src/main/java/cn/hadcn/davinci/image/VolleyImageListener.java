@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.VolleyError;
 

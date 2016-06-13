@@ -33,7 +33,7 @@ import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
  * A request for retrieving a T type response body at a given URL that also
  * optionally sends along a JSON body in the request specified.
  */
-public abstract class VolleyHttpBase extends Request<String> {
+public abstract class StringRequest extends Request<String> {
     /** Default charset for JSON request. */
     protected static final String PROTOCOL_CHARSET = "utf-8";
 
@@ -41,8 +41,8 @@ public abstract class VolleyHttpBase extends Request<String> {
     private final String mRequestBody;
 
 
-    public VolleyHttpBase(int method, String url, String requestBody, Listener<String> listener,
-                          ErrorListener errorListener) {
+    public StringRequest(int method, String url, String requestBody, Listener<String> listener,
+                         ErrorListener errorListener) {
         super(method, url, errorListener);
         mListener = listener;
         mRequestBody = requestBody;

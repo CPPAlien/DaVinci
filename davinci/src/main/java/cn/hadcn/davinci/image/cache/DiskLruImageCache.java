@@ -1,4 +1,4 @@
-package cn.hadcn.davinci.image;
+package cn.hadcn.davinci.image.cache;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.log.VinciLog;
 
 

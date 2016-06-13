@@ -8,7 +8,7 @@ import java.util.Map;
 
 import cn.hadcn.davinci.http.base.RequestWay;
 import cn.hadcn.davinci.log.VinciLog;
-import cn.hadcn.davinci.http.base.VolleyHttpBase;
+import cn.hadcn.davinci.http.base.StringRequest;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 import cn.hadcn.davinci.volley.AuthFailureError;
 import cn.hadcn.davinci.volley.DefaultRetryPolicy;
@@ -232,7 +232,7 @@ public class HttpRequest {
         }
     }
 
-    private class DaVinciHttp extends VolleyHttpBase {
+    private class DaVinciHttp extends StringRequest {
 
         /** Content type for request. */
         private final String PROTOCOL_CONTENT_TYPE = "application/json";

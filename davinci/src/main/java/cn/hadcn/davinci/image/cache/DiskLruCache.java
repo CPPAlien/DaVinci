@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.hadcn.davinci.image;
+package cn.hadcn.davinci.image.cache;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -40,6 +40,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cn.hadcn.davinci.image.base.Util;
+
 
 /**
  * A cache that uses a bounded amount of space on a filesystem. Each cache

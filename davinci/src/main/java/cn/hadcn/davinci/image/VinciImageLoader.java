@@ -8,6 +8,8 @@ import java.io.File;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.image.base.Util;
+import cn.hadcn.davinci.image.cache.DiskLruImageCache;
 import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.RequestQueue;
 

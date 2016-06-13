@@ -1,4 +1,4 @@
-package cn.hadcn.davinci.image;
+package cn.hadcn.davinci.image.cache;
 
 import java.nio.ByteBuffer;
 

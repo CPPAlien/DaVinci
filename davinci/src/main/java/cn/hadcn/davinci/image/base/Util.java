@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.hadcn.davinci.image;
+package cn.hadcn.davinci.image.base;
 
 import android.widget.ImageView;
 
@@ -30,9 +30,9 @@ import java.util.regex.Pattern;
 import cn.hadcn.davinci.log.VinciLog;
 import pl.droidsonroids.gif.GifDrawable;
 
-final class Util {
-    static final Charset US_ASCII = Charset.forName("US-ASCII");
-    static final Charset UTF_8 = Charset.forName("UTF-8");
+public final class Util {
+    public static final Charset US_ASCII = Charset.forName("US-ASCII");
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private Util() {
     }

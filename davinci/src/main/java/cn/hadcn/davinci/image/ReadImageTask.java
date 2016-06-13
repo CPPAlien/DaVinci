@@ -3,12 +3,14 @@ package cn.hadcn.davinci.image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Looper;
 import android.widget.ImageView;
 
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.R;
 import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.log.VinciLog;
 
 /**
@@ -36,6 +38,7 @@ public class ReadImageTask {
     }
 
     public final void execute() {
+        throwIfNotOnMainThread();
         if ( mImageUrl == null || mImageUrl.isEmpty() ) {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             return;
@@ -73,5 +76,11 @@ public class ReadImageTask {
 
     protected void setSize(int size) {
         mMaxSize = size;
+    }
+
+    private void throwIfNotOnMainThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new IllegalStateException("ImageLoader must be invoked from the main thread.");
+        }
     }
 }

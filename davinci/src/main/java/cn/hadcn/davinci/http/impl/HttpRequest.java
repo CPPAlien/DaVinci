@@ -148,8 +148,8 @@ public class HttpRequest {
         //construct url
         if ( null != urlMap ){
             requestUrl += "?";
-            for ( String key : urlMap.keySet() ) {
-                requestUrl = requestUrl + key + "=" + urlMap.get(key) + "&";
+            for (Map.Entry<String, Object> entry : urlMap.entrySet()) {
+                requestUrl = requestUrl + entry.getKey() + "=" + entry.getValue() + "&";
             }
         }
 

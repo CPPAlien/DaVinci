@@ -58,16 +58,16 @@ public class HttpClientStack implements HttpStack {
     }
 
     private static void addHeaders(HttpUriRequest httpRequest, Map<String, String> headers) {
-        for (String key : headers.keySet()) {
-            httpRequest.setHeader(key, headers.get(key));
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            httpRequest.setHeader(entry.getKey(), entry.getValue());
         }
     }
 
     @SuppressWarnings("unused")
     private static List<NameValuePair> getPostParameterPairs(Map<String, String> postParams) {
         List<NameValuePair> result = new ArrayList<NameValuePair>(postParams.size());
-        for (String key : postParams.keySet()) {
-            result.add(new BasicNameValuePair(key, postParams.get(key)));
+        for (Map.Entry<String, String> entry : postParams.entrySet()) {
+            result.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
         return result;
     }

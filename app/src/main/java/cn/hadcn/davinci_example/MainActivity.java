@@ -17,6 +17,7 @@ import java.util.Map;
 import cn.hadcn.davinci.DaVinci;
 import cn.hadcn.davinci.log.LogLevel;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
 
 public class MainActivity extends AppCompatActivity implements OnDaVinciRequestListener, OnDaVinciUploadListener{
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         DaVinci.init(5, LogLevel.DEBUG, "DaVinciTest", this);
         DaVinci.with(this).enableCookie();
 
+        VinciLog.e(null, "a");
+        VinciLog.e("test %d, test %s", 1, "a");
+        VinciLog.e("test %d, test %s", "a", "a");
 
         ImageView image1 = (ImageView)findViewById(R.id.image1);
         ImageView image2 = (ImageView)findViewById(R.id.image2);

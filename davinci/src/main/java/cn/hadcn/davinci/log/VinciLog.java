@@ -151,6 +151,10 @@ public class VinciLog {
     }
 
     private static String buildMessage(String format, Object... args) {
-        return (args == null) ? format : String.format(Locale.US, format, args);
+        try {
+            return (args == null) ? format : String.format(Locale.US, format, args);
+        } catch (Exception e) {
+            return format;
+        }
     }
 }

@@ -24,9 +24,9 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     private int mErrorImage;
     private int mMaxSize = 0;
     private Context mContext;
-    private ImageLoader.ImageCache mImageCache;
+    private VinciImageLoader.ImageCache mImageCache;
 
-    protected VolleyImageListener(Context context, ImageView imageView, ImageLoader.ImageCache imageCache) {
+    protected VolleyImageListener(Context context, ImageView imageView, VinciImageLoader.ImageCache imageCache) {
         this.mImageView = imageView;
         mContext = context;
         mImageCache = imageCache;
@@ -92,6 +92,8 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     }
 
     private void cacheImage(String url, ByteBuffer byteBuffer) {
-        mImageCache.putBitmap(url, byteBuffer);
+        String key = Util.generateKey(url);
+        if ( key.isEmpty() ) return;
+        mImageCache.putBitmap(key, byteBuffer);
     }
 }

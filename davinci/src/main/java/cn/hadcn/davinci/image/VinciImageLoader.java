@@ -20,18 +20,28 @@ import cn.hadcn.davinci.volley.RequestQueue;
  */
 public class VinciImageLoader {
     private String mCacheDir = null;
-    private ImageLoader.ImageCache mImageCache;
+    private ImageCache mImageCache;
     private ImageLoader mImageLoader;
     private Context mContext;
     private int mMaxSize = 0;
     private final static int CACHE_SIZE = 1024 * 1024 * 20;
     private ReadImageTask mReadImageTask;
 
+    /**
+     * Simple cache adapter interface. If provided to the ImageLoader, it
+     * will be used as an L1 cache before dispatch to Volley. Implementations
+     * must not block. Implementation with an LruCache is recommended.
+     */
+    public interface ImageCache {
+        ByteBuffer getBitmap(String url);
+        void putBitmap(String url, ByteBuffer bitmap);
+    }
+
     public VinciImageLoader(Context context, RequestQueue requestQueue) {
         mCacheDir = getDiskCacheDir(context);
         mContext = context;
         mImageCache = new DiskLruImageCache(mCacheDir, CACHE_SIZE);
-        mImageLoader = new ImageLoader(requestQueue, mImageCache);
+        mImageLoader = new ImageLoader(requestQueue);
     }
 
     private String getDiskCacheDir(Context context) {
@@ -45,24 +55,49 @@ public class VinciImageLoader {
     }
 
     public ByteBuffer getImage(String name) {
+        String key = Util.generateKey(name);
+        if ( key.isEmpty() ) throw new RuntimeException("key is invalid");
+
         try {
-            return mImageCache.getBitmap(name);
+            return mImageCache.getBitmap(key);
         } catch (NullPointerException e) {
-            VinciLog.w("Get Image failed, name = " + name);
+            VinciLog.w("Get Image failed, name = " + key);
             return null;
         }
     }
 
     public void putImage(String name, ByteBuffer bitmap) {
+        String key = Util.generateKey(name);
+        if ( key.isEmpty() ) throw new RuntimeException("key is invalid");
         try {
-            mImageCache.putBitmap(name, bitmap);
+            mImageCache.putBitmap(key, bitmap);
         } catch (NullPointerException e) {
             VinciLog.e("Put Image failed, name cannot be null", e);
         }
     }
 
+    public boolean isCached(String name) {
+        String key = Util.generateKey(name);
+        if ( key.isEmpty() ) throw new RuntimeException("key is invalid");
+
+        return mImageCache.getBitmap(name) != null;
+    }
+
     public VinciImageLoader load(String url) {
+        mBody = null;
         mReadImageTask = new ReadImageTask(mContext, mImageCache, mImageLoader, url);
+        return this;
+    }
+
+    private String mBody = null;
+
+    /**
+     * load image using post way, pass body part
+     * @param body post body
+     * @return this
+     */
+    public VinciImageLoader body(String body) {
+        mBody = body;
         return this;
     }
 
@@ -73,7 +108,7 @@ public class VinciImageLoader {
     public void into(ImageView imageView, int loadingImage, int errorImage) {
         mReadImageTask.setView(imageView, loadingImage, errorImage);
         mReadImageTask.setSize(mMaxSize);
-        mReadImageTask.execute();
+        mReadImageTask.execute(mBody);
     }
 
     /**

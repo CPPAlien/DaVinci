@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+import cn.hadcn.davinci.image.VinciImageLoader;
 import cn.hadcn.davinci.image.base.ImageLoader;
 import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.log.VinciLog;
@@ -17,7 +18,7 @@ import cn.hadcn.davinci.log.VinciLog;
  * Implementation of DiskLruCache by Jake Wharton
  * modified by 90Chris
  */
-public class DiskLruImageCache implements ImageLoader.ImageCache {
+public class DiskLruImageCache implements VinciImageLoader.ImageCache {
     private DiskLruCache mDiskCache;
     private LruImageCache mMemoryCache;
     private static int IO_BUFFER_SIZE = 8 * 1024;
@@ -47,9 +48,7 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
     }
 
     @Override
-    public void putBitmap( String name, ByteBuffer data ) {
-        String key = Util.generateKey(name);
-        if ( key.isEmpty() ) return;
+    public void putBitmap( String key, ByteBuffer data ) {
         mMemoryCache.putMemCache(key, data);
         DiskLruCache.Editor editor = null;
         try {
@@ -72,9 +71,7 @@ public class DiskLruImageCache implements ImageLoader.ImageCache {
     }
 
     @Override
-    public ByteBuffer getBitmap(String name) {
-        String key = Util.generateKey(name);
-        if ( key.isEmpty() ) return null;
+    public ByteBuffer getBitmap(String key) {
         ByteBuffer bitmap = mMemoryCache.getMemCache(key);
         if ( bitmap != null ) {
             return bitmap;

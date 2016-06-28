@@ -25,25 +25,27 @@ public class ReadImageTask {
     private String mImageUrl;
     private int mLoadingImage = DEFAULT_IMAGE_LOADING;
     private int mErrorImage = DEFAULT_IMAGE_ERROR;
-    private ImageLoader.ImageCache mImageCache;
+    private VinciImageLoader.ImageCache mImageCache;
     private ImageLoader mImageLoader;
     private Context mContext;
     private int mMaxSize;
 
-    public ReadImageTask(Context context, ImageLoader.ImageCache imageCache, ImageLoader imageLoader, String imageUrl) {
+    public ReadImageTask(Context context, VinciImageLoader.ImageCache imageCache, ImageLoader imageLoader, String imageUrl) {
         mImageUrl = imageUrl;
         mImageCache = imageCache;
         mImageLoader = imageLoader;
         mContext = context;
     }
 
-    public final void execute() {
+    public final void execute(String requestBody) {
         throwIfNotOnMainThread();
-        if ( mImageUrl == null || mImageUrl.isEmpty() ) {
+        if ( mImageUrl == null || mImageUrl.isEmpty() || Util.generateKey(mImageUrl).isEmpty() ) {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             return;
         }
-        ByteBuffer byteBuffer = mImageCache.getBitmap(mImageUrl);
+
+        ByteBuffer byteBuffer = mImageCache.getBitmap(Util.generateKey(mImageUrl));
+
         if ( byteBuffer != null ) {
             byte[] bytes = byteBuffer.array();
             VinciLog.d("Load image from cache, url = " + mImageUrl);
@@ -58,7 +60,7 @@ public class ReadImageTask {
             listener.setDefaultImage(mLoadingImage, mErrorImage);
             listener.setMaxSize(mMaxSize);
             VinciLog.d("Load image from web, url = " + mImageUrl );
-            mImageLoader.get(mImageUrl, listener);
+            mImageLoader.get(mImageUrl, requestBody, listener);
         } else {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
         }

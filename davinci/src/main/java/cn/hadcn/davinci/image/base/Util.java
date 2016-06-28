@@ -83,7 +83,7 @@ public final class Util {
 
     /**
     * Creates a unique cache key based on a url value
-    * file name in linux is limited
+    * because file name in linux is limited
     * @param uri
     * 		uri to be used in key creation
     * @return

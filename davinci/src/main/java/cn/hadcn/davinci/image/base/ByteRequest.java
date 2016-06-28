@@ -16,12 +16,10 @@
 
 package cn.hadcn.davinci.image.base;
 
-import android.graphics.Bitmap.Config;
-import android.widget.ImageView.ScaleType;
-
-
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.DefaultRetryPolicy;
 import cn.hadcn.davinci.volley.NetworkResponse;
 import cn.hadcn.davinci.volley.ParseError;
@@ -34,24 +32,21 @@ import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
  * A canned request for getting an image at a given URL and calling
  * back with a decoded Bitmap.
  */
-public class ImageRequest extends Request<ByteBuffer> {
-    /** Socket timeout in milliseconds for image requests */
+public class ByteRequest extends Request<ByteBuffer> {
+    protected static final String PROTOCOL_CHARSET = "utf-8";
+
     public static final int DEFAULT_IMAGE_TIMEOUT_MS = 1000;
 
-    /** Default number of retries for image requests */
     public static final int DEFAULT_IMAGE_MAX_RETRIES = 2;
 
-    /** Default backoff multiplier for image requests */
     public static final float DEFAULT_IMAGE_BACKOFF_MULT = 2f;
 
     private final Response.Listener<ByteBuffer> mListener;
-    private final Config mDecodeConfig;
-    private final int mMaxWidth;
-    private final int mMaxHeight;
-    private ScaleType mScaleType;
 
     /** Decoding lock so that we don't decode more than one image at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
+
+    private final String mRequestBody;
 
     /**
      * Creates a new image request, decoding to a maximum specified width and
@@ -64,40 +59,31 @@ public class ImageRequest extends Request<ByteBuffer> {
      *
      * @param url URL of the image
      * @param listener Listener to receive the decoded bitmap
-     * @param maxWidth Maximum width to decode this bitmap to, or zero for none
-     * @param maxHeight Maximum height to decode this bitmap to, or zero for
-     *            none
-     * @param scaleType The ImageViews ScaleType used to calculate the needed image size.
-     * @param decodeConfig Format to decode the bitmap to
      * @param errorListener Error listener, or null to ignore errors
      */
-    public ImageRequest(String url, Response.Listener<ByteBuffer> listener, int maxWidth, int maxHeight,
-                        ScaleType scaleType, Config decodeConfig, Response.ErrorListener errorListener) {
-        super(Method.GET, url, errorListener);
+    public ByteRequest(int method, String url, String requestBody, Response.Listener<ByteBuffer> listener, Response.ErrorListener errorListener) {
+        super(method, url, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(DEFAULT_IMAGE_TIMEOUT_MS, DEFAULT_IMAGE_MAX_RETRIES,
                 DEFAULT_IMAGE_BACKOFF_MULT));
         mListener = listener;
-        mDecodeConfig = decodeConfig;
-        mMaxWidth = maxWidth;
-        mMaxHeight = maxHeight;
-        mScaleType = scaleType;
+        mRequestBody = requestBody;
     }
 
-    /**
-     * For API compatibility with the pre-ScaleType variant of the constructor. Equivalent to
-     * the normal constructor with {@code ScaleType.CENTER_INSIDE}.
-     */
-    @Deprecated
-    public ImageRequest(String url, Response.Listener<ByteBuffer> listener, int maxWidth, int maxHeight,
-                        Config decodeConfig, Response.ErrorListener errorListener) {
-        this(url, listener, maxWidth, maxHeight,
-                ScaleType.CENTER_INSIDE, decodeConfig, errorListener);
-    }
     @Override
     public Priority getPriority() {
         return Priority.LOW;
     }
 
+    @Override
+    public byte[] getBody() {
+        try {
+            return mRequestBody == null ? null : mRequestBody.getBytes(PROTOCOL_CHARSET);
+        } catch (UnsupportedEncodingException uee) {
+            VinciLog.e("Unsupported Encoding while trying to get the bytes of %s using %s",
+                    mRequestBody, PROTOCOL_CHARSET);
+            return null;
+        }
+    }
 
     @Override
     protected Response<ByteBuffer> parseNetworkResponse(NetworkResponse response) {

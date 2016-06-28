@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -65,8 +66,17 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
             }
         });
 
-        String path = "/storage/emulated/0/360/test.png";
-        DaVinci.with(this).getUploader().uploadFile("http://192.168.1.103:12521/quicksilver/openapi/web/file/upload", path, this);
+        String path = "/sdcard/Download/cc_logo.png";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            JSONObject header = new JSONObject();
+            header.put("tokenId", "91552337-7ef7-4ab5-8cdd-c238afc1f531");
+            jsonObject.put("_header_", header);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        DaVinci.with(this).getUploader().extra("args", jsonObject).upload("http://192.168.3.117:12821/ecp/openapi/qs/file/upload", path, this);
     }
 
     @Override

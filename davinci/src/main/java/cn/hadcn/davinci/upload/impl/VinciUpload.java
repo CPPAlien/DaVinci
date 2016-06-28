@@ -19,6 +19,8 @@ import cn.hadcn.davinci.volley.VolleyError;
 public class VinciUpload {
     RequestQueue mRequestQueue;
     private String mFilePartName = null;
+    private String extraName;
+    private JSONObject extraObject;
 
     public VinciUpload(RequestQueue mRequestQueue) {
         this.mRequestQueue = mRequestQueue;
@@ -28,8 +30,15 @@ public class VinciUpload {
      * name of file in form data
      * @param name default is 'file'
      */
-    public void filePartName(String name) {
+    public VinciUpload name(String name) {
         mFilePartName = name;
+        return this;
+    }
+
+    public VinciUpload extra(String name, JSONObject object) {
+        extraName = name;
+        extraObject = object;
+        return this;
     }
 
     /**
@@ -38,32 +47,46 @@ public class VinciUpload {
      * @param filePath  local file path
      * @param listener listener of uploading
      */
-    public void uploadFile(String uploadUrl, String filePath, final OnDaVinciUploadListener listener) {
+    public void upload(String uploadUrl, String filePath, final OnDaVinciUploadListener listener) {
         File file = new File(filePath);
         if ( !file.exists() ) {
             VinciLog.w("Upload file is not exists");
             listener.onDaVinciUploadFailed("Upload file is not exists");
             return;
         }
-        UploadRequest uploadRequest = new UploadRequest(uploadUrl,mFilePartName, file,
+        UploadRequest uploadRequest = new UploadRequest(uploadUrl,
 
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        VinciLog.i("upload response:" + (response == null ? null : response.toString()));
+                        VinciLog.d("upload response:" + (response == null ? null : response.toString()));
                         listener.onDaVinciUploadSuccess(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        String reason = error.networkResponse == null ? null : String.valueOf(error.networkResponse.statusCode);
-                        VinciLog.e("upload failed: " + reason);
-                        listener.onDaVinciUploadFailed(reason);
+                        String reason = null;
+                        if ( error.networkResponse != null ) {
+                            reason = "status code : " + String.valueOf(error.networkResponse.statusCode) + ";";
+                            byte[] data = error.networkResponse.data;
+                            reason += ( data == null ? null : new String(data) );
+                        }
+                        VinciLog.e("http failed: " + reason);
+                        if ( listener != null ) {
+                            listener.onDaVinciUploadFailed(reason);
+                        }
                     }
                 });
         uploadRequest.setRetryPolicy(new DefaultRetryPolicy(4 * DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        if ( extraName != null && extraObject != null ) {
+            uploadRequest.addExtra(extraName, extraObject);
+        }
+
+        uploadRequest.addFile(mFilePartName, file);
+
         mRequestQueue.add(uploadRequest);
     }
 }

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.widget.ImageView;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.nio.ByteBuffer;
 
@@ -84,18 +87,26 @@ public class VinciImageLoader {
     }
 
     public VinciImageLoader load(String url) {
-        mBody = null;
         mReadImageTask = new ReadImageTask(mContext, mImageCache, mImageLoader, url);
         return this;
     }
 
-    private String mBody = null;
+
+    /**
+     * set image load global body, post way
+     * @param body post body, if null, change to get way
+     */
+    private String gBody = null;
+    public void gBody(String body) {
+        gBody = body;
+    }
 
     /**
      * load image using post way, pass body part
      * @param body post body
      * @return this
      */
+    private String mBody = null;
     public VinciImageLoader body(String body) {
         mBody = body;
         return this;
@@ -108,7 +119,9 @@ public class VinciImageLoader {
     public void into(ImageView imageView, int loadingImage, int errorImage) {
         mReadImageTask.setView(imageView, loadingImage, errorImage);
         mReadImageTask.setSize(mMaxSize);
-        mReadImageTask.execute(mBody);
+        if ( gBody != null ) mReadImageTask.execute(gBody);
+        else mReadImageTask.execute(mBody);
+        mBody = null;
     }
 
     /**

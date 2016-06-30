@@ -70,18 +70,18 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         JSONObject jsonObject = new JSONObject();
         try {
             JSONObject header = new JSONObject();
-            header.put("tokenId", "b72ca485-53bd-4781-8676-9e82f1ad6b77");
+            header.put("tokenId", "29d8ea73-c21e-4989-8d36-f3c8facb04ee");
             jsonObject.put("_header_", header);
-            jsonObject.put("life", "p");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         DaVinci.with(this).getUploader().extra("args", jsonObject).upload("http://192.168.3.117:12821/ecp/openapi/qs/file/upload", path, this);
 
+        DaVinci.with(this).getImageLoader().gBody(jsonObject.toString());
         //use post way to load image
-        DaVinci.with(this).getImageLoader().body(jsonObject.toString())
-                .load("http://192.168.3.117:12821/ecp/openapi/qs/file/download/p/2016/06/28/14/b92a9a1bf1a54f9798b7e44e1659f725.png")
+        DaVinci.with(this).getImageLoader()
+                .load("http://192.168.2.145:12821/ecp/openapi/ecp/avatar/view?id=1559f38e-0770-0efa-35b1-000c29d52eae&size=S")
                 .into(image3);
     }
 

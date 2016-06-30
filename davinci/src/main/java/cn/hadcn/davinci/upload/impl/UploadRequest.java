@@ -1,5 +1,7 @@
 package cn.hadcn.davinci.upload.impl;
 
+import android.util.Property;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +97,11 @@ public class UploadRequest extends Request<JSONObject> {
         headers.put("Accept", "application/json");
 
         return headers;
+    }
+
+    @Override
+    public Priority getPriority() {
+        return Priority.NORMAL;
     }
 
     @Override

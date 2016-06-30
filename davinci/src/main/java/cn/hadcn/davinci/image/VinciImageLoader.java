@@ -119,8 +119,8 @@ public class VinciImageLoader {
     public void into(ImageView imageView, int loadingImage, int errorImage) {
         mReadImageTask.setView(imageView, loadingImage, errorImage);
         mReadImageTask.setSize(mMaxSize);
-        if ( gBody != null ) mReadImageTask.execute(gBody);
-        else mReadImageTask.execute(mBody);
+        if ( mBody != null ) mReadImageTask.execute(mBody);
+        else mReadImageTask.execute(gBody);
         mBody = null;
     }
 

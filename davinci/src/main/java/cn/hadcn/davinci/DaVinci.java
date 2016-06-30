@@ -7,6 +7,8 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.hadcn.davinci.base.VolleyManager;
 import cn.hadcn.davinci.log.LogLevel;
@@ -28,15 +30,26 @@ public class DaVinci {
 
     private static RequestQueue mRequestQueue;
     private static VinciImageLoader mDaImageLoader;
+
+    private static RequestQueue mDefaultRequestQueue;
+    private static VinciImageLoader mDefaultDaImageLoader;
+
     private static DaVinci sDaVinci = null;
     private boolean isEnableCookie = false;
     private CookieManager mCookieManager = null;
-    private Context mContext = null;
+    private static Context mContext = null;
+    private Map<String, RequestQueue> queues = new HashMap<>();
+    private Map<String, VinciImageLoader> loaders = new HashMap<>();
 
     public static DaVinci with(Context context) {
+        mContext = context.getApplicationContext();
         if ( sDaVinci == null ) {
-            sDaVinci = new DaVinci(context.getApplicationContext(), 0);
+            sDaVinci = new DaVinci(0);
         }
+
+        mRequestQueue = mDefaultRequestQueue;
+        mDaImageLoader = mDefaultDaImageLoader;
+
         return sDaVinci;
     }
 
@@ -46,9 +59,41 @@ public class DaVinci {
      */
     public static DaVinci with() {
         if ( sDaVinci == null ) {
-            VinciLog.e("DaVinci instance has not been initialized yet, please use DaVinci.init() first");
+            throw new RuntimeException("DaVinci instance has not been initialized yet, please use DaVinci.init() first");
         }
+        mRequestQueue = mDefaultRequestQueue;
+        mDaImageLoader = mDefaultDaImageLoader;
+
         return sDaVinci;
+    }
+
+    /**
+     * use other thread pool
+     * @param tag tag of thread pool
+     * @return this
+     */
+    public DaVinci tag(String tag) {
+        if ( !queues.containsKey(tag) ) {
+            throw new RuntimeException("The pool has not been initialized");
+        }
+        mRequestQueue = queues.get(tag);
+        mDaImageLoader = loaders.get(tag);
+        return this;
+    }
+
+    /**
+     * add other thread pool
+     * @param tag tag
+     * @param size size
+     */
+    public void addThreadPool(String tag, int size) {
+        if ( size <= 0 ) {
+            throw new RuntimeException("pool size at least one");
+        }
+        RequestQueue requestQueue = VolleyManager.newRequestQueue(mContext, size);
+        VinciImageLoader imageLoader = new VinciImageLoader(mContext, requestQueue);
+        queues.put(tag, requestQueue);
+        loaders.put(tag, imageLoader);
     }
 
     /**
@@ -76,22 +121,21 @@ public class DaVinci {
      * @param context context
      */
     public static void init(int poolSize, LogLevel logLevel, String debugTag, Context context) {
-        sDaVinci = new DaVinci(context, poolSize);
+        mContext = context.getApplicationContext();
+        sDaVinci = new DaVinci(poolSize);
         VinciLog.init(logLevel, debugTag, context);
     }
 
     /**
      * each http request are different instance
      * but for image loader, there is only one instance for whole application
-     * @param context context
      */
-    private DaVinci(Context context, int poolSize) {
+    private DaVinci(int poolSize) {
         if ( poolSize <= 0 ) {
             poolSize = DEFAULT_NETWORK_THREAD_POOL_SIZE;
         }
-        mContext = context;
-        mRequestQueue = VolleyManager.newRequestQueue(context, poolSize);
-        mDaImageLoader = new VinciImageLoader(context, mRequestQueue);
+        mDefaultRequestQueue = VolleyManager.newRequestQueue(mContext, poolSize);
+        mDefaultDaImageLoader = new VinciImageLoader(mContext, mRequestQueue);
     }
 
     /**

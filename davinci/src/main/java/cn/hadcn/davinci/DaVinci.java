@@ -135,7 +135,7 @@ public class DaVinci {
             poolSize = DEFAULT_NETWORK_THREAD_POOL_SIZE;
         }
         mDefaultRequestQueue = VolleyManager.newRequestQueue(mContext, poolSize);
-        mDefaultDaImageLoader = new VinciImageLoader(mContext, mRequestQueue);
+        mDefaultDaImageLoader = new VinciImageLoader(mContext, mDefaultRequestQueue);
     }
 
     /**

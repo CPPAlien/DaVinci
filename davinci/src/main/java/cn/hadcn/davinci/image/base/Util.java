@@ -90,7 +90,7 @@ public final class Util {
     * 		cache key value
     */
     public static String generateKey(String uri) {
-        String regEx = "[^a-z0-9_-]";
+        String regEx = "[^a-zA-Z0-9_-]";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(uri);
         String key = m.replaceAll("").trim();

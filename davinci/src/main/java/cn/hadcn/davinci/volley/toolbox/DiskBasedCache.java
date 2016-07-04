@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.Cache;
-import cn.hadcn.davinci.volley.VolleyLog;
 
 /**
  * Cache implementation that caches files directly onto the hard disk in the specified
@@ -97,7 +97,7 @@ public class DiskBasedCache implements Cache {
         }
         mEntries.clear();
         mTotalSize = 0;
-        VolleyLog.d("Cache cleared.");
+        VinciLog.d("Cache cleared.");
     }
 
     /**
@@ -119,7 +119,7 @@ public class DiskBasedCache implements Cache {
             byte[] data = streamToBytes(cis, (int) (file.length() - cis.bytesRead));
             return entry.toCacheEntry(data);
         } catch (IOException e) {
-            VolleyLog.d("%s: %s", file.getAbsolutePath(), e.toString());
+            VinciLog.d("%s: %s", file.getAbsolutePath(), e.toString());
             remove(key);
             return null;
         } finally {
@@ -141,7 +141,7 @@ public class DiskBasedCache implements Cache {
     public synchronized void initialize() {
         if (!mRootDirectory.exists()) {
             if (!mRootDirectory.mkdirs()) {
-                VolleyLog.e("Unable to create cache dir %s", mRootDirectory.getAbsolutePath());
+                VinciLog.e("Unable to create cache dir %s", mRootDirectory.getAbsolutePath());
             }
             return;
         }
@@ -202,7 +202,7 @@ public class DiskBasedCache implements Cache {
             boolean success = e.writeHeader(fos);
             if (!success) {
                 fos.close();
-                VolleyLog.d("Failed to write header for %s", file.getAbsolutePath());
+                VinciLog.d("Failed to write header for %s", file.getAbsolutePath());
                 throw new IOException();
             }
             fos.write(entry.data);
@@ -213,7 +213,7 @@ public class DiskBasedCache implements Cache {
         }
         boolean deleted = file.delete();
         if (!deleted) {
-            VolleyLog.d("Could not clean up file %s", file.getAbsolutePath());
+            VinciLog.d("Could not clean up file %s", file.getAbsolutePath());
         }
     }
 
@@ -225,7 +225,7 @@ public class DiskBasedCache implements Cache {
         boolean deleted = getFileForKey(key).delete();
         removeEntry(key);
         if (!deleted) {
-            VolleyLog.d("Could not delete cache entry for key=%s, filename=%s",
+            VinciLog.d("Could not delete cache entry for key=%s, filename=%s",
                     key, getFilenameForKey(key));
         }
     }
@@ -257,9 +257,7 @@ public class DiskBasedCache implements Cache {
         if ((mTotalSize + neededSpace) < mMaxCacheSizeInBytes) {
             return;
         }
-        if (VolleyLog.DEBUG) {
-            VolleyLog.v("Pruning old cache entries.");
-        }
+        VinciLog.d("Pruning old cache entries.");
 
         long before = mTotalSize;
         int prunedFiles = 0;
@@ -273,7 +271,7 @@ public class DiskBasedCache implements Cache {
             if (deleted) {
                 mTotalSize -= e.size;
             } else {
-               VolleyLog.d("Could not delete cache entry for key=%s, filename=%s",
+               VinciLog.d("Could not delete cache entry for key=%s, filename=%s",
                        e.key, getFilenameForKey(e.key));
             }
             iterator.remove();
@@ -284,10 +282,8 @@ public class DiskBasedCache implements Cache {
             }
         }
 
-        if (VolleyLog.DEBUG) {
-            VolleyLog.v("pruned %d files, %d bytes, %d ms",
-                    prunedFiles, (mTotalSize - before), SystemClock.elapsedRealtime() - startTime);
-        }
+        VinciLog.d("pruned %d files, %d bytes, %d ms",
+                prunedFiles, (mTotalSize - before), SystemClock.elapsedRealtime() - startTime);
     }
 
     /**
@@ -438,7 +434,7 @@ public class DiskBasedCache implements Cache {
                 os.flush();
                 return true;
             } catch (IOException e) {
-                VolleyLog.d("%s", e.toString());
+                VinciLog.d("%s", e.toString());
                 return false;
             }
         }

@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.AuthFailureError;
 import cn.hadcn.davinci.volley.Cache.*;
 import cn.hadcn.davinci.volley.ClientError;
@@ -49,15 +50,13 @@ import cn.hadcn.davinci.volley.RetryPolicy;
 import cn.hadcn.davinci.volley.ServerError;
 import cn.hadcn.davinci.volley.TimeoutError;
 import cn.hadcn.davinci.volley.VolleyError;
-import cn.hadcn.davinci.volley.VolleyLog;
 
 /**
  * A network performing Volley requests over an {@link HttpStack}.
  */
 public class BasicNetwork implements Network {
-    protected static final boolean DEBUG = VolleyLog.DEBUG;
 
-    private static int SLOW_REQUEST_THRESHOLD_MS = 3000;
+    private static final int SLOW_REQUEST_THRESHOLD_MS = 3000;
 
     private static int DEFAULT_POOL_SIZE = 4096;
 
@@ -150,7 +149,7 @@ public class BasicNetwork implements Network {
                 } else {
                     throw new NoConnectionError(e);
                 }
-                VolleyLog.e("Unexpected response code %d for %s", statusCode, request.getUrl());
+                VinciLog.e("Unexpected response code %d for %s", statusCode, request.getUrl());
                 NetworkResponse networkResponse;
                 if (responseContents != null) {
                     networkResponse = new NetworkResponse(statusCode, responseContents,
@@ -185,8 +184,8 @@ public class BasicNetwork implements Network {
      */
     private void logSlowRequests(long requestLifetime, Request<?> request,
             byte[] responseContents, StatusLine statusLine) {
-        if (DEBUG || requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
-            VolleyLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +
+        if ( requestLifetime > SLOW_REQUEST_THRESHOLD_MS ) {
+            VinciLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +
                     "[rc=%d], [retryCount=%s]", request, requestLifetime,
                     responseContents != null ? responseContents.length : "null",
                     statusLine.getStatusCode(), request.getRetryPolicy().getCurrentRetryCount());
@@ -231,7 +230,7 @@ public class BasicNetwork implements Network {
 
     protected void logError(String what, String url, long start) {
         long now = SystemClock.elapsedRealtime();
-        VolleyLog.v("HTTP ERROR(%s) %d ms to fetch %s", what, (now - start), url);
+        VinciLog.d("HTTP ERROR(%s) %d ms to fetch %s", what, (now - start), url);
     }
 
     /** Reads the contents of HttpEntity into a byte[]. */
@@ -257,7 +256,7 @@ public class BasicNetwork implements Network {
             } catch (IOException e) {
                 // This can happen if there was an exception above that left the entity in
                 // an invalid state.
-                VolleyLog.v("Error occured when calling consumingContent");
+                VinciLog.d("Error occured when calling consumingContent");
             }
             mPool.returnBuf(buffer);
             bytes.close();
@@ -268,9 +267,9 @@ public class BasicNetwork implements Network {
      * Converts Headers[] to Map<String, String>.
      */
     protected static Map<String, String> convertHeaders(Header[] headers) {
-        Map<String, String> result = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-        for (int i = 0; i < headers.length; i++) {
-            result.put(headers[i].getName(), headers[i].getValue());
+        Map<String, String> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (Header header : headers) {
+            result.put(header.getName(), header.getValue());
         }
         return result;
     }

@@ -17,10 +17,6 @@
 package cn.hadcn.davinci.base;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.http.AndroidHttpClient;
-import android.os.Build;
 
 import java.io.File;
 
@@ -28,7 +24,6 @@ import cn.hadcn.davinci.volley.Network;
 import cn.hadcn.davinci.volley.RequestQueue;
 import cn.hadcn.davinci.volley.toolbox.BasicNetwork;
 import cn.hadcn.davinci.volley.toolbox.DiskBasedCache;
-import cn.hadcn.davinci.volley.toolbox.HttpClientStack;
 import cn.hadcn.davinci.volley.toolbox.HttpStack;
 import cn.hadcn.davinci.volley.toolbox.HurlStack;
 

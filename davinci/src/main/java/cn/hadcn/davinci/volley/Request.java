@@ -26,7 +26,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
-import cn.hadcn.davinci.volley.VolleyLog.*;
+
+import cn.hadcn.davinci.log.LogLevel;
+import cn.hadcn.davinci.log.VinciLog;
+import cn.hadcn.davinci.log.VinciLog.MarkerLog;
 
 /**
  * Base class for all network requests.
@@ -56,7 +59,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /** An event log tracing the lifetime of this request; for debugging. */
-    private final MarkerLog mEventLog = MarkerLog.ENABLED ? new MarkerLog() : null;
+    private final MarkerLog mEventLog = VinciLog.logLevel == LogLevel.NONE ?  null : new MarkerLog();
 
     /**
      * Request method of this request.  Currently supports GET, POST, PUT, DELETE, HEAD, OPTIONS,
@@ -202,7 +205,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * Adds an event to this request's event log; for debugging.
      */
     public void addMarker(String tag) {
-        if (MarkerLog.ENABLED) {
+        if (VinciLog.logLevel != LogLevel.NONE) {
             mEventLog.add(tag, Thread.currentThread().getId());
         }
     }
@@ -216,7 +219,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         if (mRequestQueue != null) {
             mRequestQueue.finish(this);
         }
-        if (MarkerLog.ENABLED) {
+        if (VinciLog.logLevel != LogLevel.NONE) {
             final long threadId = Thread.currentThread().getId();
             if (Looper.myLooper() != Looper.getMainLooper()) {
                 // If we finish marking off of the main thread, we need to

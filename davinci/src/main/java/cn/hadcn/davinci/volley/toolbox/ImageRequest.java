@@ -21,12 +21,12 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView.ScaleType;
 
+import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.volley.DefaultRetryPolicy;
 import cn.hadcn.davinci.volley.NetworkResponse;
 import cn.hadcn.davinci.volley.ParseError;
 import cn.hadcn.davinci.volley.Request;
 import cn.hadcn.davinci.volley.Response;
-import cn.hadcn.davinci.volley.VolleyLog;
 
 /**
  * A canned request for getting an image at a given URL and calling
@@ -158,7 +158,7 @@ public class ImageRequest extends Request<Bitmap> {
             try {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
-                VolleyLog.e("Caught OOM for %d byte image, url=%s", response.data.length, getUrl());
+                VinciLog.e("Caught OOM for %d byte image, url=%s", e, response.data.length, getUrl());
                 return Response.error(new ParseError(e));
             }
         }

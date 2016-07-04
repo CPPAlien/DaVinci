@@ -1,7 +1,5 @@
 package cn.hadcn.davinci.upload.impl;
 
-import android.util.Property;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +25,6 @@ import cn.hadcn.davinci.volley.ParseError;
 import cn.hadcn.davinci.volley.Request;
 import cn.hadcn.davinci.volley.Response;
 import cn.hadcn.davinci.volley.Response.*;
-import cn.hadcn.davinci.volley.VolleyLog;
 import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
 
 
@@ -120,7 +117,7 @@ public class UploadRequest extends Request<JSONObject> {
         }
         catch (IOException e)
         {
-            VolleyLog.e("IOException writing to ByteArrayOutputStream bos, building the multipart request.");
+            VinciLog.e("IOException writing to ByteArrayOutputStream bos, building the multipart request.", e);
         }
         return bos.toByteArray();
     }

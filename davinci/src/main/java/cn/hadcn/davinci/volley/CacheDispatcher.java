@@ -20,6 +20,8 @@ import android.os.Process;
 
 import java.util.concurrent.BlockingQueue;
 
+import cn.hadcn.davinci.log.VinciLog;
+
 /**
  * Provides a thread for performing cache triage on a queue of requests.
  *
@@ -30,8 +32,6 @@ import java.util.concurrent.BlockingQueue;
  * by a {@link NetworkDispatcher}.
  */
 public class CacheDispatcher extends Thread {
-
-    private static final boolean DEBUG = VolleyLog.DEBUG;
 
     /** The queue of requests coming in for triage. */
     private final BlockingQueue<Request<?>> mCacheQueue;
@@ -77,7 +77,7 @@ public class CacheDispatcher extends Thread {
 
     @Override
     public void run() {
-        if (DEBUG) VolleyLog.v("start new dispatcher");
+        VinciLog.d("start new dispatcher");
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
         // Make a blocking call to initialize the cache.
@@ -151,7 +151,6 @@ public class CacheDispatcher extends Thread {
                 if (mQuit) {
                     return;
                 }
-                continue;
             }
         }
     }

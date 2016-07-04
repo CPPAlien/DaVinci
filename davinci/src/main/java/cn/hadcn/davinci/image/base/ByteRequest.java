@@ -25,7 +25,6 @@ import cn.hadcn.davinci.volley.NetworkResponse;
 import cn.hadcn.davinci.volley.ParseError;
 import cn.hadcn.davinci.volley.Request;
 import cn.hadcn.davinci.volley.Response;
-import cn.hadcn.davinci.volley.VolleyLog;
 import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
 
 /**
@@ -98,7 +97,7 @@ public class ByteRequest extends Request<ByteBuffer> {
                     return Response.success(byteBuffer, HttpHeaderParser.parseCacheHeaders(response));
                 }
             } catch (OutOfMemoryError e) {
-                VolleyLog.e("Caught OOM for %d byte image, url=%s", response.data.length, getUrl());
+                VinciLog.e("Caught OOM for %d byte image, url=%s", e, response.data.length, getUrl());
                 return Response.error(new ParseError(e));
             }
         }

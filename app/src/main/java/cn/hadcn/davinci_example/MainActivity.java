@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         DaVinci.with(this).getUploader().extra("args", jsonObject).upload("http://192.168.3.117:12821/ecp/openapi/qs/file/upload", path, this);
 
         DaVinci.with().addThreadPool("one", 1);
-        DaVinci.with().tag("one").getImageLoader().load("http://y3.ifengimg.com/fashion_spider/dci_2012/02/20a78c36cc31225b1a7efa89f566f591.jpg").into(image1);
+        DaVinci.with().tag("one").getImageLoader().load("http://y3.ifengimg.com/fashion_spider/dci_2012/02/20a78c36cc31225b1a7efa89f566f591.jpg").into(image3);
     }
 
     @Override

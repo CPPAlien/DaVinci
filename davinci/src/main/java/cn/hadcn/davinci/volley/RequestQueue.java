@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.hadcn.davinci.log.VinciLog;
+
 /**
  * A request dispatch queue with a thread pool of dispatchers.
  *
@@ -239,9 +241,7 @@ public class RequestQueue {
                 }
                 stagedRequests.add(request);
                 mWaitingRequests.put(cacheKey, stagedRequests);
-                if (VolleyLog.DEBUG) {
-                    VolleyLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
-                }
+                VinciLog.d("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
             } else {
                 // Insert 'null' queue for this cacheKey, indicating there is now a request in
                 // flight.
@@ -275,10 +275,8 @@ public class RequestQueue {
                 String cacheKey = request.getCacheKey();
                 Queue<Request<?>> waitingRequests = mWaitingRequests.remove(cacheKey);
                 if (waitingRequests != null) {
-                    if (VolleyLog.DEBUG) {
-                        VolleyLog.v("Releasing %d waiting requests for cacheKey=%s.",
-                                waitingRequests.size(), cacheKey);
-                    }
+                    VinciLog.d("Releasing %d waiting requests for cacheKey=%s.",
+                            waitingRequests.size(), cacheKey);
                     // Process all queued up requests. They won't be considered as in flight, but
                     // that's not a problem as the cache has been primed by 'request'.
                     mCacheQueue.addAll(waitingRequests);

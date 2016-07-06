@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.hadcn.davinci.http.base.RequestWay;
 import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.http.base.StringRequest;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
@@ -97,7 +96,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doGet(String requestUrl, Map<String, Object> params, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestWay.GET,
+        doRequest(Request.Method.GET,
                 requestUrl, params, null, requestListener);
     }
 
@@ -108,7 +107,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doPost(String requestUrl, JSONObject postJsonData, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestWay.POST,
+        doRequest(Request.Method.POST,
                 requestUrl, null, postJsonData, requestListener);
     }
 
@@ -119,7 +118,7 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doPost(String requestUrl, String postBodyString, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestWay.POST,
+        doRequest(Request.Method.POST,
                 requestUrl, null, postBodyString, requestListener);
     }
 
@@ -129,19 +128,19 @@ public class HttpRequest {
      * @param requestListener listener
      */
     public void doPost(String requestUrl, OnDaVinciRequestListener requestListener) {
-        doRequest(RequestWay.POST,
+        doRequest(Request.Method.POST,
                 requestUrl, null, null, requestListener);
     }
 
     /**
      * do http request
-     * @param way GET or POST
+     * @param method GET or POST
      * @param url request url
      * @param urlMap get method parameters  map
      * @param postBody post method parameters
      * @param requestListener listener
      */
-    private void doRequest(RequestWay way, String url, Map<String, Object> urlMap, Object postBody, final OnDaVinciRequestListener requestListener) {
+    private void doRequest(int method, String url, Map<String, Object> urlMap, Object postBody, final OnDaVinciRequestListener requestListener) {
         mRequestListener = requestListener;
         String requestUrl = url;
 
@@ -153,8 +152,8 @@ public class HttpRequest {
             }
         }
 
-        VinciLog.d("Do " + way.getType() + " request, url = " + requestUrl);
-        DaVinciHttp jsonObjectRequest = getRequest(way, requestUrl, postBody);
+        VinciLog.d("Do request, url = " + requestUrl);
+        DaVinciHttp jsonObjectRequest = getRequest(method, requestUrl, postBody);
 
         if ( jsonObjectRequest == null ){
             VinciLog.e("post body type is error, it should be json or string");
@@ -168,34 +167,23 @@ public class HttpRequest {
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    private DaVinciHttp getRequest(RequestWay way, String requestUrl, Object postBody) {
-        int volleyWay;
-
-        //get volley method code, get or post
-        switch (way) {
-            case GET:
-                volleyWay = Request.Method.GET;
-                break;
-            default:
-                volleyWay = Request.Method.POST;
-                if ( null != postBody ){
-                    VinciLog.d("doPost data = " + postBody.toString());
-                }
-                break;
+    private DaVinciHttp getRequest(int method, String requestUrl, Object postBody) {
+        if ( null != postBody ){
+            VinciLog.d("body data = " + postBody.toString());
         }
 
         //inflate body part depends on type we get
         DaVinciHttp jsonObjectRequest = null;
         if ( postBody == null ) {
-            jsonObjectRequest = new DaVinciHttp(volleyWay, requestUrl,
+            jsonObjectRequest = new DaVinciHttp(method, requestUrl,
                     new ResponseListener(),
                     new ErrorListener());
         } else if ( postBody instanceof JSONObject ) {
-            jsonObjectRequest = new DaVinciHttp(volleyWay, requestUrl, (JSONObject)postBody,
+            jsonObjectRequest = new DaVinciHttp(method, requestUrl, (JSONObject)postBody,
                     new ResponseListener(),
                     new ErrorListener());
-        } else if (postBody instanceof String ) {
-            jsonObjectRequest = new DaVinciHttp(volleyWay, requestUrl, (String)postBody,
+        } else if ( postBody instanceof String ) {
+            jsonObjectRequest = new DaVinciHttp(method, requestUrl, (String)postBody,
                     new ResponseListener(),
                     new ErrorListener());
         }

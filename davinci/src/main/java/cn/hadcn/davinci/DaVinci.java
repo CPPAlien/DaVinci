@@ -200,14 +200,18 @@ public class DaVinci {
         return mDaImageLoader;
     }
 
-    /**
-     * get uploader instance, default content type is binary
-     */
     public VinciUpload getUploader() {
         return new VinciUpload(mRequestQueue);
     }
 
+    private String gBody;
+    public void setDownloadBody(String body) {
+        gBody = body;
+    }
+
     public VinciDownload getDownloader() {
-        return new VinciDownload(mRequestQueue);
+        VinciDownload download = new VinciDownload(mRequestQueue);
+        download.body(gBody);
+        return download;
     }
 }

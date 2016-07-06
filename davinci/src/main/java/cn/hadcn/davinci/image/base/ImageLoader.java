@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import cn.hadcn.davinci.volley.DefaultRetryPolicy;
 import cn.hadcn.davinci.volley.Request;
 import cn.hadcn.davinci.volley.RequestQueue;
 import cn.hadcn.davinci.volley.Response.*;
@@ -14,6 +15,12 @@ import cn.hadcn.davinci.volley.VolleyError;
 
 
 public class ImageLoader {
+    public static final int DEFAULT_IMAGE_TIMEOUT_MS = 1000;
+
+    public static final int DEFAULT_IMAGE_MAX_RETRIES = 2;
+
+    public static final float DEFAULT_IMAGE_BACKOFF_MULT = 2f;
+
     /** RequestQueue for dispatching ImageRequests onto. */
     private final RequestQueue mRequestQueue;
 
@@ -115,7 +122,7 @@ public class ImageLoader {
     }
 
     protected Request<ByteBuffer> makeImageRequest(int method, final String requestUrl, String requestBody) {
-        return new ByteRequest(method, requestUrl, requestBody, new Listener<ByteBuffer>() {
+        ByteRequest request = new ByteRequest(method, requestUrl, requestBody, new Listener<ByteBuffer>() {
             @Override
             public void onResponse(ByteBuffer response) {
                 onGetImageSuccess(requestUrl, response);
@@ -126,6 +133,9 @@ public class ImageLoader {
                 onGetImageError(requestUrl, error);
             }
         });
+        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_IMAGE_TIMEOUT_MS, DEFAULT_IMAGE_MAX_RETRIES,
+                DEFAULT_IMAGE_BACKOFF_MULT));
+        return request;
     }
 
     /**

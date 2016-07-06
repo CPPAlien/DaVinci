@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.log.VinciLog;
-import cn.hadcn.davinci.volley.DefaultRetryPolicy;
 import cn.hadcn.davinci.volley.NetworkResponse;
 import cn.hadcn.davinci.volley.ParseError;
 import cn.hadcn.davinci.volley.Request;
@@ -33,12 +32,6 @@ import cn.hadcn.davinci.volley.toolbox.HttpHeaderParser;
  */
 public class ByteRequest extends Request<ByteBuffer> {
     protected static final String PROTOCOL_CHARSET = "utf-8";
-
-    public static final int DEFAULT_IMAGE_TIMEOUT_MS = 1000;
-
-    public static final int DEFAULT_IMAGE_MAX_RETRIES = 2;
-
-    public static final float DEFAULT_IMAGE_BACKOFF_MULT = 2f;
 
     private final Response.Listener<ByteBuffer> mListener;
 
@@ -62,8 +55,7 @@ public class ByteRequest extends Request<ByteBuffer> {
      */
     public ByteRequest(int method, String url, String requestBody, Response.Listener<ByteBuffer> listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
-        setRetryPolicy(new DefaultRetryPolicy(DEFAULT_IMAGE_TIMEOUT_MS, DEFAULT_IMAGE_MAX_RETRIES,
-                DEFAULT_IMAGE_BACKOFF_MULT));
+
         mListener = listener;
         mRequestBody = requestBody;
     }

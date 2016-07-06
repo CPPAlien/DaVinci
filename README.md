@@ -44,6 +44,10 @@ Glide
 
 4, 支持使用POST方法获得图片；
 
+5, 支持创建多线程池
+
+6, 支持上传、下载功能
+
 ###2， 使用方法
 
 用Gradle的方式导入DaVinci库
@@ -53,7 +57,7 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.2.2'
+    compile 'com.github.CPPAlien:DaVinci:1.2.5'
 }
 ```
 

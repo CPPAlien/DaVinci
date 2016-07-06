@@ -1,6 +1,7 @@
 package cn.hadcn.davinci_example;
 
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,9 @@ import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +23,10 @@ import cn.hadcn.davinci.DaVinci;
 import cn.hadcn.davinci.log.LogLevel;
 import cn.hadcn.davinci.http.OnDaVinciRequestListener;
 import cn.hadcn.davinci.log.VinciLog;
-import cn.hadcn.davinci.upload.OnDaVinciUploadListener;
+import cn.hadcn.davinci.other.OnVinciDownloadListener;
+import cn.hadcn.davinci.other.OnVinciUploadListener;
 
-public class MainActivity extends AppCompatActivity implements OnDaVinciRequestListener, OnDaVinciUploadListener{
+public class MainActivity extends AppCompatActivity implements OnDaVinciRequestListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,16 +75,45 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         JSONObject jsonObject = new JSONObject();
         try {
             JSONObject header = new JSONObject();
-            header.put("tokenId", "29d8ea73-c21e-4989-8d36-f3c8facb04ee");
+            header.put("tokenId", "6240e6e5-10d1-4d1f-83bf-39910870583c");
             jsonObject.put("_header_", header);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        DaVinci.with(this).getUploader().extra("args", jsonObject).upload("http://192.168.3.117:12821/ecp/openapi/qs/file/upload", path, this);
+        DaVinci.with(this).getUploader().extra("args", jsonObject).upload("http://192.168.3.117:12821/ecp/openapi/qs/file/upload", path, new OnVinciUploadListener() {
+            @Override
+            public void onVinciUploadSuccess(JSONObject response) {
+
+            }
+
+            @Override
+            public void onVinciUploadFailed(String reason) {
+
+            }
+        });
 
         DaVinci.with().addThreadPool("one", 1);
         DaVinci.with().tag("one").getImageLoader().load("http://y3.ifengimg.com/fashion_spider/dci_2012/02/20a78c36cc31225b1a7efa89f566f591.jpg").into(image3);
+
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/" + "a.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        DaVinci.with().getDownloader().body(jsonObject.toString()).download("http://ec2-52-192-96-229.ap-northeast-1.compute.amazonaws.com:12821/ecp/openapi/qs/file/download/p/2016/07/06/03/f5d28e3065244ab9952858f991838246.txt"
+                , out, new OnVinciDownloadListener() {
+                    @Override
+                    public void onVinciDownloadSuccess() {
+
+                    }
+
+                    @Override
+                    public void onVinciDownloadFailed(String reason) {
+
+                    }
+                });
     }
 
     @Override
@@ -89,16 +123,6 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
 
     @Override
     public void onDaVinciRequestFailed(String errorInfo) {
-
-    }
-
-    @Override
-    public void onDaVinciUploadSuccess(JSONObject response) {
-
-    }
-
-    @Override
-    public void onDaVinciUploadFailed(String reason) {
 
     }
 }

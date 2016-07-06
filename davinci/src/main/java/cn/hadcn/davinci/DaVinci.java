@@ -16,7 +16,8 @@ import cn.hadcn.davinci.log.VinciLog;
 import cn.hadcn.davinci.image.VinciImageLoader;
 import cn.hadcn.davinci.http.impl.HttpRequest;
 import cn.hadcn.davinci.http.impl.PersistentCookieStore;
-import cn.hadcn.davinci.upload.impl.VinciUpload;
+import cn.hadcn.davinci.other.impl.VinciDownload;
+import cn.hadcn.davinci.other.impl.VinciUpload;
 import cn.hadcn.davinci.volley.RequestQueue;
 
 
@@ -204,5 +205,9 @@ public class DaVinci {
      */
     public VinciUpload getUploader() {
         return new VinciUpload(mRequestQueue);
+    }
+
+    public VinciDownload getDownloader() {
+        return new VinciDownload(mRequestQueue);
     }
 }

@@ -1,4 +1,4 @@
-package cn.hadcn.davinci.upload.impl;
+package cn.hadcn.davinci.other.request;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,7 +34,6 @@ public class UploadRequest extends Request<JSONObject> {
     private static final String CHARSET = "utf-8";
     private MultipartEntity mEntity;
     private final Response.Listener<JSONObject> mListener;
-    protected Map<String, String> headers;
 
     public UploadRequest(String url, Listener<JSONObject> listener, ErrorListener errorListener) {
         super(Method.POST, url, errorListener);

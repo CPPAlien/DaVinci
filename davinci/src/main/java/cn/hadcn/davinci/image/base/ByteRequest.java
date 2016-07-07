@@ -101,6 +101,7 @@ public class ByteRequest extends Request<ByteBuffer> {
 
     @Override
     public void progressUpdate(final int progress) {
+        if ( mProgressListener == null ) return;
         mHandler.post(new Runnable() {
             @Override
             public void run() {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         JSONObject jsonObject = new JSONObject();
         try {
             JSONObject header = new JSONObject();
-            header.put("tokenId", "6240e6e5-10d1-4d1f-83bf-39910870583c");
+            header.put("tokenId", "0e5495fb-da46-4b28-95ea-e9f6aec1d69a");
             jsonObject.put("_header_", header);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -96,12 +97,14 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         DaVinci.with().addThreadPool("one", 1);
         DaVinci.with().tag("one").getImageLoader().load("http://y3.ifengimg.com/fashion_spider/dci_2012/02/20a78c36cc31225b1a7efa89f566f591.jpg").into(image3);
 
-        OutputStream out = null;
+        OutputStream out;
         try {
             out = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/" + "a.txt");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return;
         }
+        final TextView tv = (TextView)findViewById(R.id.test_text);
         DaVinci.with().getDownloader().body(jsonObject.toString()).download("http://ec2-52-192-96-229.ap-northeast-1.compute.amazonaws.com:12821/ecp/openapi/qs/file/download/p/2016/07/06/03/f5d28e3065244ab9952858f991838246.txt"
                 , out, new OnVinciDownloadListener() {
                     @Override
@@ -112,6 +115,13 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
                     @Override
                     public void onVinciDownloadFailed(String reason) {
 
+                    }
+
+                    @Override
+                    public void onVinciDownloadProgress(int progress) {
+                        VinciLog.e("progress = " + progress);
+
+                        tv.setText(String.valueOf(progress));
                     }
                 });
     }

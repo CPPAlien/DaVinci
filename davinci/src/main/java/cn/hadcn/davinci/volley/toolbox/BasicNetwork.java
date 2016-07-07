@@ -91,7 +91,7 @@ public class BasicNetwork implements Network {
             Map<String, String> responseHeaders = Collections.emptyMap();
             try {
                 // Gather headers.
-                Map<String, String> headers = new HashMap<String, String>();
+                Map<String, String> headers = new HashMap<>();
                 addCacheHeaders(headers, request.getCacheEntry());
                 httpResponse = mHttpStack.performRequest(request, headers);
                 StatusLine statusLine = httpResponse.getStatusLine();
@@ -120,7 +120,7 @@ public class BasicNetwork implements Network {
 
                 // Some responses such as 204s do not have content.  We must check.
                 if (httpResponse.getEntity() != null) {
-                  responseContents = entityToBytes(httpResponse.getEntity());
+                  responseContents = entityToBytes(httpResponse.getEntity(), request);
                 } else {
                   // Add 0 byte response as a way of honestly representing a
                   // no-content request.
@@ -234,7 +234,7 @@ public class BasicNetwork implements Network {
     }
 
     /** Reads the contents of HttpEntity into a byte[]. */
-    private byte[] entityToBytes(HttpEntity entity) throws IOException, ServerError {
+    private byte[] entityToBytes(HttpEntity entity, Request request) throws IOException, ServerError {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(mPool, (int) entity.getContentLength());
         byte[] buffer = null;
@@ -244,9 +244,12 @@ public class BasicNetwork implements Network {
                 throw new ServerError();
             }
             buffer = mPool.getBuf(1024);
+            int progress = 0;
             int count;
             while ((count = in.read(buffer)) != -1) {
                 bytes.write(buffer, 0, count);
+                progress += count;
+                request.progressUpdate(progress);
             }
             return bytes.toByteArray();
         } finally {

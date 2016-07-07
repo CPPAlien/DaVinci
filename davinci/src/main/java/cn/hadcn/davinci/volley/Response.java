@@ -38,6 +38,10 @@ public class Response<T> {
         void onErrorResponse(VolleyError error);
     }
 
+    public interface ProgressListener{
+        void onProgressUpdate(int progress);
+    }
+
     /** Returns a successful response containing the parsed result. */
     public static <T> Response<T> success(T result, Cache.Entry cacheEntry) {
         return new Response<T>(result, cacheEntry);

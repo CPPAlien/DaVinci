@@ -16,6 +16,9 @@
 
 package cn.hadcn.davinci.image.base;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
@@ -34,30 +37,26 @@ public class ByteRequest extends Request<ByteBuffer> {
     protected static final String PROTOCOL_CHARSET = "utf-8";
 
     private final Response.Listener<ByteBuffer> mListener;
+    private Response.ProgressListener mProgressListener;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     /** Decoding lock so that we don't decode more than one image at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
 
     private final String mRequestBody;
 
-    /**
-     * Creates a new image request, decoding to a maximum specified width and
-     * height. If both width and height are zero, the image will be decoded to
-     * its natural size. If one of the two is nonzero, that dimension will be
-     * clamped and the other one will be set to preserve the image's aspect
-     * ratio. If both width and height are nonzero, the image will be decoded to
-     * be fit in the rectangle of dimensions width x height while keeping its
-     * aspect ratio.
-     *
-     * @param url URL of the image
-     * @param listener Listener to receive the decoded bitmap
-     * @param errorListener Error listener, or null to ignore errors
-     */
+
     public ByteRequest(int method, String url, String requestBody, Response.Listener<ByteBuffer> listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
 
         mListener = listener;
         mRequestBody = requestBody;
+    }
+
+    public ByteRequest(int method, String url, String requestBody, Response.Listener<ByteBuffer> listener, Response.ErrorListener errorListener, Response.ProgressListener progressListener) {
+        this(method, url, requestBody, listener, errorListener);
+        mProgressListener = progressListener;
     }
 
     @Override
@@ -98,5 +97,15 @@ public class ByteRequest extends Request<ByteBuffer> {
     @Override
     protected void deliverResponse(ByteBuffer response) {
         mListener.onResponse(response);
+    }
+
+    @Override
+    public void progressUpdate(final int progress) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mProgressListener.onProgressUpdate(progress);
+            }
+        });
     }
 }

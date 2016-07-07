@@ -575,6 +575,14 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     abstract protected void deliverResponse(T response);
 
     /**
+     * publish progress
+     * @param progress progress of http, how many bytes have already been downloaded
+     */
+    public void progressUpdate(int progress) {
+
+    }
+
+    /**
      * Delivers error message to the ErrorListener that the Request was
      * initialized with.
      *

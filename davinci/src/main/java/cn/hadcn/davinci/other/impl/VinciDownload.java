@@ -47,13 +47,14 @@ public class VinciDownload {
             public void onErrorResponse(VolleyError error) {
                 listener.onVinciDownloadFailed("net failed");
             }
+        }, new Response.ProgressListener() {
+            @Override
+            public void onProgressUpdate(int progress) {
+                listener.onVinciDownloadProgress(progress);
+            }
         });
         request.setRetryPolicy(new DefaultRetryPolicy(4 * DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         mRequestQueue.add(request);
-    }
-
-    public interface Listener {
-
     }
 }

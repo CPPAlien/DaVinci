@@ -7,4 +7,5 @@ package cn.hadcn.davinci.other;
 public interface OnVinciDownloadListener {
     void onVinciDownloadSuccess();
     void onVinciDownloadFailed(String reason);
+    void onVinciDownloadProgress(int progress);
 }

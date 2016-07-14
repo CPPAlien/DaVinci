@@ -44,7 +44,7 @@ public class ReadImageTask {
             return;
         }
 
-        ByteBuffer byteBuffer = mImageCache.getBitmap(Util.generateKey(mImageUrl));
+        ByteBuffer byteBuffer = mImageCache.getBitmap(Util.generateKey(mImageUrl + mMaxSize));
 
         if ( byteBuffer != null ) {
             byte[] bytes = byteBuffer.array();

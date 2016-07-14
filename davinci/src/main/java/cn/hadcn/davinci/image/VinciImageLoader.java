@@ -79,13 +79,6 @@ public class VinciImageLoader {
         }
     }
 
-    public boolean isCached(String name) {
-        String key = Util.generateKey(name);
-        if ( key.isEmpty() ) throw new RuntimeException("key is invalid");
-
-        return mImageCache.getBitmap(name) != null;
-    }
-
     public VinciImageLoader load(String url) {
         mReadImageTask = new ReadImageTask(mContext, mImageCache, mImageLoader, url);
         return this;

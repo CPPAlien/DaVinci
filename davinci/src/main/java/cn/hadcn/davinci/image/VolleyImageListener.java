@@ -59,18 +59,13 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
 
             int bHeight = bitmap.getHeight();
             int bWidth = bitmap.getWidth();
-            int scaleWidth = 0;
-            int scaleHeight = 0;
             if ( mMaxSize > 0 ) {
-                if ( bWidth > mMaxSize) {
-                    scaleWidth = mMaxSize;
-                    scaleHeight = (scaleWidth * bHeight) / bWidth;
-                    bitmap = Bitmap.createScaledBitmap(bitmap, scaleWidth, scaleHeight, false);
-                }
-                if ( scaleHeight > mMaxSize) {
-                    scaleHeight = mMaxSize;
-                    scaleWidth = (scaleHeight * bWidth) / bHeight;
-                    bitmap = Bitmap.createScaledBitmap(bitmap, scaleWidth, scaleHeight, false);
+                if ( bWidth > bHeight ) {
+                    int otherSize = (mMaxSize * bHeight) / bWidth;
+                    bitmap = Bitmap.createScaledBitmap(bitmap, mMaxSize, otherSize, false);
+                } else {
+                    int otherSize = (mMaxSize * bWidth) / bHeight;
+                    bitmap = Bitmap.createScaledBitmap(bitmap, otherSize, mMaxSize, false);
                 }
             }
             mImageView.setImageBitmap(bitmap);
@@ -92,7 +87,7 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     }
 
     private void cacheImage(String url, ByteBuffer byteBuffer) {
-        String key = Util.generateKey(url);
+        String key = Util.generateKey(url + mMaxSize);
         if ( key.isEmpty() ) return;
         mImageCache.putBitmap(key, byteBuffer);
     }

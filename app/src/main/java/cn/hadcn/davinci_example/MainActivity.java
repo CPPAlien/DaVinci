@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         DaVinci.with(this).getImageLoader().load("http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif").into(image1);
 
         Glide.with(this).load("http://7xlkhg.com2.z0.glb.qiniucdn.com/qbi_cry.gif").into(image2);
-        DaVinci.with(this).getImageLoader().load( "http://photo.enterdesk.com/2011-11-26/enterdesk.com-1CB20FDF5918603F9264E5BFDC4DF691.jpg").resize(400).into(image3);
+        DaVinci.with(this).getImageLoader().load("http://photo.enterdesk.com/2011-11-26/enterdesk.com-1CB20FDF5918603F9264E5BFDC4DF691.jpg").resize(400).into(image3);
         image2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
         });
 
         DaVinci.with().addThreadPool("one", 1);
-        DaVinci.with().tag("one").getImageLoader().load("http://y3.ifengimg.com/fashion_spider/dci_2012/02/20a78c36cc31225b1a7efa89f566f591.jpg").into(image3);
+        DaVinci.with().tag("one").getImageLoader().load("http://y3.ifengimg.com/fashion_spider/dci_2012/02/20a78c36cc31225b1a7efa89f566f591.jpg").resize(600).into(image3);
 
         OutputStream out;
         try {

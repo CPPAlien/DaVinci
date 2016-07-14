@@ -57,7 +57,7 @@ repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.2.5'
+    compile 'com.github.CPPAlien:DaVinci:1.3.0'
 }
 ```
 
@@ -118,11 +118,11 @@ getHttpRequest().timeOut(int timesOutMs)
 ```
 getHttpRequest().maxRetries(int maxRetries)
 ```
-* 设置加载图片大小，图片长宽按比例缩小为设定的maxpix大小
+* 设置加载图片大小，图片长宽按比例缩放为设定的maxpix大小，并且缓存到本地
 ```
 getImageLoader().resize(int maxPix).load(...)
 ```
-**注：设置图片大小有如下限制：1，对Gif无效；2，只能按比例缩小图片，无法放大图片；3，只能在第一次加载时有效（因为图片加载成功后都会缓存到本地，为了效率考虑，后续显示该图片都从缓存中拿取，不再进行大小裁剪）。**
+**注：对Gif无效；**
 
 * 使用POST方法加载图片，body中为post方法体
 ```

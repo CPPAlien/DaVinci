@@ -1,17 +1,15 @@
 package cn.hadcn.davinci.image;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Looper;
 import android.widget.ImageView;
 
-import java.nio.ByteBuffer;
-
 import cn.hadcn.davinci.R;
+import cn.hadcn.davinci.image.base.ImageEntity;
 import cn.hadcn.davinci.image.base.ImageLoader;
 import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.log.VinciLog;
+import pl.droidsonroids.gif.GifDrawable;
 
 /**
  * read image from any where
@@ -38,23 +36,27 @@ public class ReadImageTask {
     }
 
     public final void execute(String requestBody) {
-        throwIfNotOnMainThread();
         if ( mImageUrl == null || mImageUrl.isEmpty() || Util.generateKey(mImageUrl).isEmpty() ) {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             return;
         }
 
-        ByteBuffer byteBuffer = mImageCache.getBitmap(Util.generateKey(mImageUrl + mMaxSize));
+        ImageEntity entity = mImageCache.getBitmap(Util.generateKey(mImageUrl + mMaxSize));
 
-        if ( byteBuffer != null ) {
-            byte[] bytes = byteBuffer.array();
-            VinciLog.d("Load image from cache, url = " + mImageUrl);
+        if ( entity != null ) {
+            VinciLog.d("Load image from cache, key = " + Util.generateKey(mImageUrl + mMaxSize));
 
             // if it's gif, show as gif
-            if ( Util.doGif(mImageView, bytes) ) return;
-
-            Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            mImageView.setImageBitmap(image);
+            if ( entity.isGif() ) {
+                try {
+                    GifDrawable gifDrawable = new GifDrawable(entity.getBytes());
+                    mImageView.setImageDrawable(gifDrawable);
+                } catch (Throwable e) {
+                    VinciLog.w("pl.droidsonroids.gif.GifDrawable not found");
+                }
+            } else {
+                mImageView.setImageBitmap(entity.getBitmap());
+            }
         } else if ( mImageUrl.startsWith("http") ) {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);

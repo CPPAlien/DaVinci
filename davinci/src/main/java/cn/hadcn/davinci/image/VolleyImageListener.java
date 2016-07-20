@@ -50,7 +50,7 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
 
             // if it's gif, show as gif, and save in cache
             if ( Util.doGif(mImageView, bytes) ) {
-                cacheImage(response.getRequestUrl(), ByteBuffer.wrap(bytes));
+                cacheImage(response.getRequestUrl(), bytes);
                 return;
             }
 
@@ -75,7 +75,7 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] byteArray = stream.toByteArray();
 
-            cacheImage(response.getRequestUrl(), ByteBuffer.wrap(byteArray));
+            cacheImage(response.getRequestUrl(), byteArray);
         } else {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mLoadingImage));
         }
@@ -86,9 +86,9 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
         mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
     }
 
-    private void cacheImage(String url, ByteBuffer byteBuffer) {
+    private void cacheImage(String url, byte[] data) {
         String key = Util.generateKey(url + mMaxSize);
         if ( key.isEmpty() ) return;
-        mImageCache.putBitmap(key, byteBuffer);
+        mImageCache.putBitmap(key, data);
     }
 }

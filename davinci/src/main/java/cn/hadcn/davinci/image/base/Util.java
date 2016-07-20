@@ -103,7 +103,7 @@ public final class Util {
     }
 
     public static boolean doGif(ImageView imageView, byte[] data) {
-        if ( data[0] == 'G' && data[1] == 'I' && data[2] == 'F') {
+        if ( isGif( data ) ) {
             try {
                 GifDrawable gifDrawable = new GifDrawable(data);
                 imageView.setImageDrawable(gifDrawable);
@@ -113,5 +113,9 @@ public final class Util {
             }
         }
         return false;
+    }
+
+    public static boolean isGif(byte[] data) {
+        return data[0] == 'G' && data[1] == 'I' && data[2] == 'F';
     }
 }

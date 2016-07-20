@@ -3,13 +3,9 @@ package cn.hadcn.davinci.image;
 import android.content.Context;
 import android.widget.ImageView;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.nio.ByteBuffer;
 
+import cn.hadcn.davinci.image.base.ImageEntity;
 import cn.hadcn.davinci.image.base.ImageLoader;
 import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.image.cache.DiskLruImageCache;
@@ -27,7 +23,7 @@ public class VinciImageLoader {
     private ImageLoader mImageLoader;
     private Context mContext;
     private int mMaxSize = 0;
-    private final static int CACHE_SIZE = 1024 * 1024 * 20;
+    private final static int CACHE_SIZE = 1024 * 1024 * 50;
     private ReadImageTask mReadImageTask;
 
     /**
@@ -36,8 +32,8 @@ public class VinciImageLoader {
      * must not block. Implementation with an LruCache is recommended.
      */
     public interface ImageCache {
-        ByteBuffer getBitmap(String url);
-        void putBitmap(String url, ByteBuffer bitmap);
+        ImageEntity getBitmap(String url);
+        void putBitmap(String url, byte[] data);
     }
 
     public VinciImageLoader(Context context, RequestQueue requestQueue) {
@@ -57,7 +53,7 @@ public class VinciImageLoader {
         return mCacheDir + File.separator + Util.generateKey(fileName) + ".0";
     }
 
-    public ByteBuffer getImage(String name) {
+    public ImageEntity getImage(String name) {
         String key = Util.generateKey(name);
         if ( key.isEmpty() ) throw new RuntimeException("key is invalid");
 
@@ -69,7 +65,7 @@ public class VinciImageLoader {
         }
     }
 
-    public void putImage(String name, ByteBuffer bitmap) {
+    public void putImage(String name, byte[] bitmap) {
         String key = Util.generateKey(name);
         if ( key.isEmpty() ) throw new RuntimeException("key is invalid");
         try {
@@ -84,22 +80,21 @@ public class VinciImageLoader {
         return this;
     }
 
-
+    private String gBody = null;
     /**
      * set image load global body, post way
      * @param body post body, if null, change to get way
      */
-    private String gBody = null;
     public void gBody(String body) {
         gBody = body;
     }
 
+    private String mBody = null;
     /**
      * load image using post way, pass body part
      * @param body post body
      * @return this
      */
-    private String mBody = null;
     public VinciImageLoader body(String body) {
         mBody = body;
         return this;

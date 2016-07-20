@@ -1,15 +1,17 @@
 package cn.hadcn.davinci.image.cache;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 import cn.hadcn.davinci.image.VinciImageLoader;
-import cn.hadcn.davinci.image.base.ImageLoader;
+import cn.hadcn.davinci.image.base.ImageEntity;
 import cn.hadcn.davinci.image.base.Util;
 import cn.hadcn.davinci.log.VinciLog;
 
@@ -24,22 +26,23 @@ public class DiskLruImageCache implements VinciImageLoader.ImageCache {
     private static int IO_BUFFER_SIZE = 8 * 1024;
     private static final int APP_VERSION = 1;
     private static final int VALUE_COUNT = 1;
+    private static final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 8);
 
     public DiskLruImageCache( String cachePath, int diskCacheSize ) {
         try {
                 final File diskCacheDir = new File(cachePath);
-                mMemoryCache = new LruImageCache(diskCacheSize);
+                mMemoryCache = new LruImageCache(maxMemory);
                 mDiskCache = DiskLruCache.open( diskCacheDir, APP_VERSION, VALUE_COUNT, diskCacheSize );
             } catch (IOException e) {
                 e.printStackTrace();
             }
     }
 
-    private void writeBitmapToFile(ByteBuffer bitmap, DiskLruCache.Editor editor ) throws IOException {
+    private void writeBitmapToFile(byte[] data, DiskLruCache.Editor editor ) throws IOException {
         OutputStream out = null;
         try {
             out = new BufferedOutputStream( editor.newOutputStream(0), IO_BUFFER_SIZE );
-            out.write(bitmap.array());
+            out.write(data);
         } finally {
             if ( out != null ) {
                 out.close();
@@ -48,8 +51,11 @@ public class DiskLruImageCache implements VinciImageLoader.ImageCache {
     }
 
     @Override
-    public void putBitmap( String key, ByteBuffer data ) {
-        mMemoryCache.putMemCache(key, data);
+    public void putBitmap( String key, byte[] data ) {
+        // save to memory cache first
+        saveToMemory(key, data);
+
+        // save to disk cache
         DiskLruCache.Editor editor = null;
         try {
             editor = mDiskCache.edit( key );
@@ -71,10 +77,11 @@ public class DiskLruImageCache implements VinciImageLoader.ImageCache {
     }
 
     @Override
-    public ByteBuffer getBitmap(String key) {
-        ByteBuffer bitmap = mMemoryCache.getMemCache(key);
-        if ( bitmap != null ) {
-            return bitmap;
+    public ImageEntity getBitmap(String key) {
+        ImageEntity imageEntity = mMemoryCache.getMemCache(key);
+
+        if ( imageEntity != null ) {
+            return imageEntity;
         }
 
         DiskLruCache.Snapshot snapshot = null;
@@ -89,8 +96,8 @@ public class DiskLruImageCache implements VinciImageLoader.ImageCache {
                 int size = buffIn.available();
                 byte[] bytes = new byte[size];
                 if ( buffIn.read(bytes) == -1) return null;
-                bitmap = ByteBuffer.wrap(bytes);
-                mMemoryCache.putMemCache(key, bitmap);
+
+                imageEntity = saveToMemory(key, bytes);
             }
         } catch ( IOException e ) {
             e.printStackTrace();
@@ -100,7 +107,21 @@ public class DiskLruImageCache implements VinciImageLoader.ImageCache {
             }
         }
 
-        return bitmap;
+        return imageEntity;
+    }
+
+    private ImageEntity saveToMemory(String key, byte[] data) {
+        ImageEntity.Builder builder = new ImageEntity.Builder(data.length);
+
+        if ( Util.isGif(data) ) {
+            builder.isGif(true).bytes(data);
+        } else {
+            Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
+            builder.isGif(false).bitmap(image);
+        }
+        ImageEntity entity = builder.build();
+        mMemoryCache.putMemCache(key, entity);
+        return entity;
     }
 
     public void clearCache() {

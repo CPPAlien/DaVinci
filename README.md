@@ -50,14 +50,15 @@ Glide
 
 ###2， 使用方法
 
-用Gradle的方式导入DaVinci库
+用Gradle的方式导入DaVinci库，因为DaVinci的日志打印采用[VinciLog](https://github.com/CPPAlien/VinciLog)，所以需要同时引入VinciLog库
 
 ```
 repositories{
     maven { url "https://jitpack.io" }
 }
 dependencies {
-    compile 'com.github.CPPAlien:DaVinci:1.3.0'
+	compile 'com.github.CPPAlien:VinciLog:2.0.1'
+    compile 'com.github.CPPAlien:DaVinci:1.3.2'
 }
 ```
 

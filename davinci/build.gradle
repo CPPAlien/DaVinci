@@ -20,4 +20,5 @@ android {
 dependencies {
     compile files('libs/httpmime-4.1.3.jar')
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
+    compile 'com.github.CPPAlien:VinciLog:2.0.1'
 }

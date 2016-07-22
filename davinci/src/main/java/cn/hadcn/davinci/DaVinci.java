@@ -204,6 +204,10 @@ public class DaVinci {
         return new VinciUpload(mRequestQueue);
     }
 
+    public Context getContext() {
+        return mContext;
+    }
+
     private String gBody;
     public void setDownloadBody(String body) {
         gBody = body;

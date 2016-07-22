@@ -1,7 +1,6 @@
 package cn.hadcn.davinci_example;
 
 import android.content.Intent;
-import android.os.Debug;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements OnDaVinciRequestL
     }
 
     @Override
-    public void onDaVinciRequestFailed(String errorInfo) {
+    public void onDaVinciRequestFailed(int code, String reason) {
 
     }
 }

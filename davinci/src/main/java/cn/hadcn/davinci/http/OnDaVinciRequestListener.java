@@ -7,5 +7,5 @@ package cn.hadcn.davinci.http;
  */
 public interface OnDaVinciRequestListener {
     void onDaVinciRequestSuccess(String response);
-    void onDaVinciRequestFailed(String reason);
+    void onDaVinciRequestFailed(int code, String reason);
 }

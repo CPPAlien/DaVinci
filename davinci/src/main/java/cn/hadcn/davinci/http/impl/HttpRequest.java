@@ -207,16 +207,21 @@ public class HttpRequest {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            String reason = null;
             if ( error.networkResponse != null ) {
-                reason = "status code : " + String.valueOf(error.networkResponse.statusCode) + ";";
+                int code = error.networkResponse.statusCode;
                 byte[] data = error.networkResponse.data;
-                reason += ( data == null ? null : new String(data) );
+                String reason = ( data == null ? null : new String(data) );
+                VinciLog.e("http failed: " + code + ", " + reason);
+                if ( mRequestListener != null ) {
+                    mRequestListener.onDaVinciRequestFailed(code, reason);
+                }
+            } else {
+                VinciLog.e("http failed: There is no Internet connection");
+                if ( mRequestListener != null ) {
+                    mRequestListener.onDaVinciRequestFailed(-1, "There is no Internet connection");
+                }
             }
-            VinciLog.e("http failed: " + reason);
-            if ( mRequestListener != null ) {
-                mRequestListener.onDaVinciRequestFailed(reason);
-            }
+
         }
     }
 

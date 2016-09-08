@@ -119,11 +119,11 @@ getHttpRequest().timeOut(int timesOutMs)
 ```
 getHttpRequest().maxRetries(int maxRetries)
 ```
-* 设置加载图片大小，图片长宽按比例缩放为设定的maxpix大小，并且缓存到本地
+* 设置加载图片大小，下载后图片长宽按比例缩放为设定的maxpix大小，并且使用url + maxPix的方式作为key, 缓存到本地
 ```
 getImageLoader().resize(int maxPix).load(...)
 ```
-**注：对Gif无效；**
+**注：1, 对Gif无效；2, 如果不想使用maxPix作为key的一部分,可以使用resize(int maxPix, 0);**
 
 * 使用POST方法加载图片，body中为post方法体
 ```

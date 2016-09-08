@@ -23,6 +23,7 @@ public class VinciImageLoader {
     private ImageLoader mImageLoader;
     private Context mContext;
     private int mMaxSize = 0;
+    private int mKeyMode = 0;
     private final static int CACHE_SIZE = 1024 * 1024 * 50;
     private ReadImageTask mReadImageTask;
 
@@ -106,7 +107,7 @@ public class VinciImageLoader {
 
     public void into(ImageView imageView, int loadingImage, int errorImage) {
         mReadImageTask.setView(imageView, loadingImage, errorImage);
-        mReadImageTask.setSize(mMaxSize);
+        mReadImageTask.setSize(mMaxSize, mKeyMode);
         if ( mBody != null ) mReadImageTask.execute(mBody);
         else mReadImageTask.execute(gBody);
         mBody = null;
@@ -119,6 +120,19 @@ public class VinciImageLoader {
      */
     public VinciImageLoader resize(int maxPix) {
         mMaxSize = maxPix;
+        mKeyMode = 1;
+        return this;
+    }
+
+    /**
+     * limit the max size of an image will be displayed, height and width are both shorter than maxPix
+     * @param maxPix max pixels of height and width
+     * @param mode save mode, mode = 0, do not use maxPix as image save key
+     * @return DaImageLoader instance
+     */
+    public VinciImageLoader resize(int maxPix, int mode) {
+        mMaxSize = maxPix;
+        mKeyMode = mode;
         return this;
     }
 }

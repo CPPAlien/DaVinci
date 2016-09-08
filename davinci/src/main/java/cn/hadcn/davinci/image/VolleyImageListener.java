@@ -23,6 +23,7 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     private int mLoadingImage;
     private int mErrorImage;
     private int mMaxSize = 0;
+    private int mKeyMode = 0;
     private Context mContext;
     private VinciImageLoader.ImageCache mImageCache;
 
@@ -32,8 +33,9 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
         mImageCache = imageCache;
     }
 
-    protected void setMaxSize(int size) {
+    protected void setMaxSize(int size, int mode) {
         mMaxSize = size;
+        mKeyMode = mode;
     }
 
     protected void setDefaultImage(int loadingImage, int errorImage) {
@@ -87,7 +89,10 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     }
 
     private void cacheImage(String url, byte[] data) {
-        String key = Util.generateKey(url + mMaxSize);
+        String rawKey = url;
+        if ( mKeyMode != 0 && mMaxSize != 0 ) rawKey += mMaxSize;
+
+        String key = Util.generateKey(rawKey);
         if ( key.isEmpty() ) return;
         mImageCache.putBitmap(key, data);
     }

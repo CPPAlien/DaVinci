@@ -27,6 +27,7 @@ public class ReadImageTask {
     private ImageLoader mImageLoader;
     private Context mContext;
     private int mMaxSize;
+    private int mKeyMode;
 
     public ReadImageTask(Context context, VinciImageLoader.ImageCache imageCache, ImageLoader imageLoader, String imageUrl) {
         mImageUrl = imageUrl;
@@ -40,11 +41,12 @@ public class ReadImageTask {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             return;
         }
-
-        ImageEntity entity = mImageCache.getBitmap(Util.generateKey(mImageUrl + mMaxSize));
+        String rawKey = mImageUrl;
+        if ( mKeyMode != 0 && mMaxSize != 0 ) rawKey += mMaxSize;
+        ImageEntity entity = mImageCache.getBitmap(Util.generateKey(rawKey));
 
         if ( entity != null ) {
-            VinciLog.d("Load image from cache, key = " + Util.generateKey(mImageUrl + mMaxSize));
+            VinciLog.d("Load image from cache, key = " + Util.generateKey(rawKey));
 
             // if it's gif, show as gif
             if ( entity.isGif() ) {
@@ -60,7 +62,7 @@ public class ReadImageTask {
         } else if ( mImageUrl.startsWith("http") ) {
             VolleyImageListener listener = new VolleyImageListener(mContext, mImageView, mImageCache);
             listener.setDefaultImage(mLoadingImage, mErrorImage);
-            listener.setMaxSize(mMaxSize);
+            listener.setMaxSize(mMaxSize, mKeyMode);
             VinciLog.d("Load image from web, url = " + mImageUrl );
             mImageLoader.get(mImageUrl, requestBody, listener);
         } else {
@@ -78,13 +80,8 @@ public class ReadImageTask {
         mImageView = imageView;
     }
 
-    protected void setSize(int size) {
+    protected void setSize(int size, int mode) {
         mMaxSize = size;
-    }
-
-    private void throwIfNotOnMainThread() {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw new IllegalStateException("ImageLoader must be invoked from the main thread.");
-        }
+        mKeyMode = mode;
     }
 }

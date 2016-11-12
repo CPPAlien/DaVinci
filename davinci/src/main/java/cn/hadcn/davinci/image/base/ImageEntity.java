@@ -12,11 +12,16 @@ public class ImageEntity {
     private boolean isGif;
     private int size;
 
-    public ImageEntity(Builder builder) {
-        bitmap = builder.bitmap;
-        bytes = builder.bytes;
-        isGif = builder.isGif;
-        size = builder.size;
+    public ImageEntity(byte[] bytes) {
+        this.bytes = bytes;
+        this.isGif = true;
+        this.size = bytes.length;
+    }
+
+    public ImageEntity(Bitmap bitmap) {
+        this.bitmap = bitmap;
+        this.isGif = false;
+        this.size = bitmap.getRowBytes();
     }
 
     public Bitmap getBitmap() {
@@ -35,35 +40,9 @@ public class ImageEntity {
         return size;
     }
 
-    public static class Builder {
-        private Bitmap bitmap;
-        private byte[] bytes;
-        private boolean isGif;
-        private int size;
-
-        public Builder(int size) {
-            this.size = size;
-        }
-
-        public Builder bitmap(Bitmap bitmap) {
-            this.bitmap = bitmap;
-            return this;
-        }
-
-        public Builder bytes(byte[] bytes) {
-            this.bytes = bytes;
-            return this;
-        }
-
-        public Builder isGif(boolean isGif) {
-            this.isGif = isGif;
-            return this;
-        }
-
-        public ImageEntity build() {
-            return new ImageEntity(this);
-        }
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        bitmap.recycle();
     }
-
-
 }

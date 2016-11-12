@@ -18,7 +18,7 @@ import cn.hadcn.davinci.volley.VolleyError;
  *
  * Created by 90Chris on 2016/5/5.
  */
-public class VolleyImageListener implements ImageLoader.ImageListener {
+class VolleyImageListener implements ImageLoader.ImageListener {
     private ImageView mImageView;
     private int mLoadingImage;
     private int mErrorImage;
@@ -27,18 +27,18 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
     private Context mContext;
     private VinciImageLoader.ImageCache mImageCache;
 
-    protected VolleyImageListener(Context context, ImageView imageView, VinciImageLoader.ImageCache imageCache) {
+    VolleyImageListener(Context context, ImageView imageView, VinciImageLoader.ImageCache imageCache) {
         this.mImageView = imageView;
         mContext = context;
         mImageCache = imageCache;
     }
 
-    protected void setMaxSize(int size, int mode) {
+    void setMaxSize(int size, int mode) {
         mMaxSize = size;
         mKeyMode = mode;
     }
 
-    protected void setDefaultImage(int loadingImage, int errorImage) {
+    void setDefaultImage(int loadingImage, int errorImage) {
         mLoadingImage = loadingImage;
         mErrorImage = errorImage;
     }
@@ -61,14 +61,17 @@ public class VolleyImageListener implements ImageLoader.ImageListener {
 
             int bHeight = bitmap.getHeight();
             int bWidth = bitmap.getWidth();
-            if ( mMaxSize > 0 ) {
+            if ( mMaxSize > 0 && mMaxSize != bHeight && mMaxSize != bWidth ) {
+                //createScaledBitmap will create a new bitmap, we need release the old one
+                Bitmap oldBitmap = bitmap;
                 if ( bWidth > bHeight ) {
                     int otherSize = (mMaxSize * bHeight) / bWidth;
-                    bitmap = Bitmap.createScaledBitmap(bitmap, mMaxSize, otherSize, false);
+                    bitmap = Bitmap.createScaledBitmap(oldBitmap, mMaxSize, otherSize, false);
                 } else {
                     int otherSize = (mMaxSize * bWidth) / bHeight;
-                    bitmap = Bitmap.createScaledBitmap(bitmap, otherSize, mMaxSize, false);
+                    bitmap = Bitmap.createScaledBitmap(oldBitmap, otherSize, mMaxSize, false);
                 }
+                oldBitmap.recycle();
             }
             mImageView.setImageBitmap(bitmap);
 

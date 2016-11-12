@@ -111,15 +111,15 @@ public class DiskLruImageCache implements VinciImageLoader.ImageCache {
     }
 
     private ImageEntity saveToMemory(String key, byte[] data) {
-        ImageEntity.Builder builder = new ImageEntity.Builder(data.length);
+        ImageEntity entity;
 
         if ( Util.isGif(data) ) {
-            builder.isGif(true).bytes(data);
+            entity = new ImageEntity(data);
         } else {
             Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
-            builder.isGif(false).bitmap(image);
+            entity = new ImageEntity(image);
         }
-        ImageEntity entity = builder.build();
+
         mMemoryCache.putMemCache(key, entity);
         return entity;
     }

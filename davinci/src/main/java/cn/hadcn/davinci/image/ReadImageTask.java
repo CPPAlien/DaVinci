@@ -1,7 +1,6 @@
 package cn.hadcn.davinci.image;
 
 import android.content.Context;
-import android.os.Looper;
 import android.widget.ImageView;
 
 import cn.hadcn.davinci.R;
@@ -15,7 +14,7 @@ import pl.droidsonroids.gif.GifDrawable;
  * read image from any where
  * Created by 90Chris on 2016/5/5.
  */
-public class ReadImageTask {
+class ReadImageTask {
     private final int DEFAULT_IMAGE_LOADING = R.drawable.image_loading;
     private final int DEFAULT_IMAGE_ERROR = R.drawable.image_load_error;
 
@@ -29,14 +28,14 @@ public class ReadImageTask {
     private int mMaxSize;
     private int mKeyMode;
 
-    public ReadImageTask(Context context, VinciImageLoader.ImageCache imageCache, ImageLoader imageLoader, String imageUrl) {
+    ReadImageTask(Context context, VinciImageLoader.ImageCache imageCache, ImageLoader imageLoader, String imageUrl) {
         mImageUrl = imageUrl;
         mImageCache = imageCache;
         mImageLoader = imageLoader;
         mContext = context;
     }
 
-    public final void execute(String requestBody) {
+    final void execute(String requestBody) {
         if ( mImageUrl == null || mImageUrl.isEmpty() || Util.generateKey(mImageUrl).isEmpty() ) {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(mErrorImage));
             return;
@@ -70,7 +69,7 @@ public class ReadImageTask {
         }
     }
 
-    protected void setView(ImageView imageView, int image_loading, int image_error) {
+    void setView(ImageView imageView, int image_loading, int image_error) {
         mImageView = imageView;
         if ( image_loading != 0 ) mLoadingImage = image_loading;
         if ( image_error != 0 ) mErrorImage = image_error;
@@ -80,7 +79,7 @@ public class ReadImageTask {
         mImageView = imageView;
     }
 
-    protected void setSize(int size, int mode) {
+    void setSize(int size, int mode) {
         mMaxSize = size;
         mKeyMode = mode;
     }

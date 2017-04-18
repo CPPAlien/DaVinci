@@ -14,7 +14,7 @@
 
 我们再来看下实现上述功能，两者需要的代码对比。
 
-####DaVinci
+#### DaVinci
 ```
 DaVinci
 	.with(this)
@@ -23,7 +23,7 @@ DaVinci
 	.into(image1);
 ```
 
-####Glide
+#### Glide
 ```
 Glide
 	.with(this)
@@ -34,7 +34,7 @@ Glide
 实现方式基本差不多，但你要知道本库可不单单只有图片加载功能哦。
 
 
-###1，特色
+### 1，特色
 
 1，支持Gif图片，并且做到Gif库可插拔；
 
@@ -48,7 +48,7 @@ Glide
 
 6, 支持上传、下载功能
 
-###2， 使用方法
+### 2， 使用方法
 
 用Gradle的方式导入DaVinci库，因为DaVinci的日志打印采用[VinciLog](https://github.com/CPPAlien/VinciLog)，所以需要同时引入VinciLog库
 
@@ -62,7 +62,7 @@ dependencies {
 }
 ```
 
-###3， Get和Post请求
+### 3， Get和Post请求
 ```
 DaVinci.with(Context).getHttpRequest()
 doGet(String requestUrl, Map<String, Object> params, OnDaVinciRequestListener requestListener)
@@ -75,7 +75,7 @@ public interface OnDaVinciRequestListener {
 }
 ```
 
-###4， 从网络上加载图片
+### 4， 从网络上加载图片
 ```
 DaVinci.with(Context).getImageLoader().load("image url put here").into(imageView);
 ```
@@ -86,7 +86,7 @@ DaVinci.with(Context).getImageLoader().load("image url put here").into(imageView
 
 开启本库Gif功能，你需要导入`compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'`，导入后，加载的图片如果为Gif，则会自动以动图的方式在ImageView里面显示。如果你没有导入该android-gif-drawable库，则Gif图会被当做普通图片处理。
 
-###5，其他用法
+### 5，其他用法
 
 * 如果你不想每次在使用`DaVinci.with(Context)`时都传入`Context`，则你可以在所有调用前先`init`一下，以后只要使用`DaVinci.with()`即可。
 ```

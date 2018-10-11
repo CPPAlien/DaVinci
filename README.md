@@ -5,10 +5,10 @@
 **我们先来一张Glide与DaVinci加载同一张网络上Gif图的对比效果**
 
 <div class='row'>
-    <img src='http://7xq276.com2.z0.glb.qiniucdn.com/davinci.gif' width="250px"/>
+    <img src='https://user-images.githubusercontent.com/4279515/46784293-181e6600-cd60-11e8-8b9f-cc4ac4823586.gif' width="250px"/>
 </div>
 
-[Demo Download](http://7xq276.com2.z0.glb.qiniucdn.com/davinci_demo.apk)
+[Demo Download](http://cdn.flowergo.xyz/davinci_demo.apk)
 
 从上面我们可以明显看出，Glide加载一张Gif图比DaVinci明显花更久的时间。并且再看加载后的动画效果，DaVinci加载后的Gif图动画非常流畅，而Glide加载过后的Gif的动画有些显示问题。并且用DaVinci加载图片，你可以定制loading过程的图片，而Glide无法做到。
 

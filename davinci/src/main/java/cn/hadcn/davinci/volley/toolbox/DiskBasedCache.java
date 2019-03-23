@@ -110,27 +110,28 @@ public class DiskBasedCache implements Cache {
         if (entry == null) {
             return null;
         }
-
+        Entry resultEntry = null;
         File file = getFileForKey(key);
         CountingInputStream cis = null;
         try {
             cis = new CountingInputStream(new BufferedInputStream(new FileInputStream(file)));
             CacheHeader.readHeader(cis); // eat header
             byte[] data = streamToBytes(cis, (int) (file.length() - cis.bytesRead));
-            return entry.toCacheEntry(data);
+            resultEntry = entry.toCacheEntry(data);
         } catch (IOException e) {
             VinciLog.d("%s: %s", file.getAbsolutePath(), e.toString());
             remove(key);
-            return null;
+            resultEntry = null;
         } finally {
             if (cis != null) {
                 try {
                     cis.close();
                 } catch (IOException ioe) {
-                    return null;
+                    resultEntry = null;
                 }
             }
         }
+        return resultEntry;
     }
 
     /**
